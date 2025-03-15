@@ -1,8 +1,10 @@
 from __future__ import annotations
-from datetime import datetime
 from typing import Dict, Literal, Union, TYPE_CHECKING, cast, Tuple, overload
 import RPi.GPIO as GPIO
 from .Pins import InputPin, OutputPin, VirtualPin
+
+from datetime import datetime
+import asyncio
 
 if TYPE_CHECKING:
     from .Pins import PinType
@@ -15,9 +17,11 @@ type TriggerContext = Tuple[InputPin | VirtualPin, float]  # (pin, timestamp)
 
 class PinManager:
     pins: Dict[str, Union[InputPin, VirtualPin, OutputPin]]
+    event_loop: asyncio.AbstractEventLoop
 
     def __init__(self):
         self.pins = {}
+        self.event_loop = asyncio.new_event_loop()
 
     def has_pin_been_setup(self, pin_number: int):
         # check if the gpio_pin has been setup
@@ -45,16 +49,12 @@ class PinManager:
 
         if pin_type == "input":
             print(f"registering input pin {pin_number}")
-            GPIO.setup(pin_number, GPIO.IN)
+            GPIO.setup(pin_number, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
             input_pin_name = f"I#{pin_number}"
             new_input_pin: InputPin = InputPin(input_pin_name, pin_number)
             self.pins[input_pin_name] = new_input_pin
-            GPIO.add_event_detect(
-                pin_number,
-                GPIO.RISING,
-                callback=self.event_trigger(new_input_pin),
-                bouncetime=200,
-            )
+
+            self.add_callback_to_eventloop(new_input_pin)
 
             return new_input_pin
 
@@ -79,7 +79,6 @@ class PinManager:
         if pin.pin_type == "input":
             del self.pins[pin.name]
             GPIO.cleanup(pin._gpio_pin)
-            GPIO.remove_event_detect(pin._gpio_pin)
 
         if pin.pin_type == "output":
             del self.pins[pin.name]
@@ -117,12 +116,28 @@ class PinManager:
                 virtual_pins.append(pin)
         return cast(list[VirtualPin], virtual_pins)
 
-    def event_trigger(self, pin: InputPin):
-        def callback(channel):
-            if channel != pin._gpio_pin:
-                print(
-                    f"Channel mismatch (Channel:{channel} != PinGPIO:{pin._gpio_pin}), need to investigate. Still triggering."
-                )
-            pin.trigger((pin, datetime.timestamp(datetime.now())))
+    async def on_input_callback(self, pin: InputPin):
+        while True:
+            if GPIO.input(pin.gpio_pin) and not pin.is_triggered:
+                trigger_context = (pin, datetime.timestamp(datetime.now()))
+                pin.is_triggered = True
+                print(f"Pin {pin.name} triggered")
 
-        return callback
+                loop = asyncio.get_event_loop()
+                loop.create_task(pin.trigger(trigger_context))
+
+            if not GPIO.input(pin.gpio_pin) and pin.is_triggered:
+                print(f"Pin {pin.name} released")
+                pin.is_triggered = False
+
+            await asyncio.sleep(0.1)
+
+    def add_callback_to_eventloop(self, pin: InputPin):
+        task = self.event_loop.create_task(self.on_input_callback(pin))
+        return task
+
+    def start_event_loop(self):
+        self.event_loop.run_forever()
+
+    def stop_event_loop(self):
+        self.event_loop.stop()

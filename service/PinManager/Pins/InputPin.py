@@ -1,8 +1,8 @@
 from __future__ import annotations
+import asyncio
 
 from .Pin import Pin
 from typing import Union, TYPE_CHECKING
-from time import sleep
 from datetime import datetime
 
 
@@ -16,7 +16,7 @@ type TriggerablePins = Union[OutputPin, VirtualPin]
 
 class InputPin(Pin):
     trigger_pins: list[TriggerablePins]
-    trigger_delay: float  ## Time in seconds to wait before triggering the output pin
+    trigger_delay: float
 
     def __init__(
         self,
@@ -33,13 +33,16 @@ class InputPin(Pin):
     def remove_trigger_pin(self, pin: TriggerablePins):
         self.trigger_pins.remove(pin)
 
-    def activate(self, trigger_context: TriggerContext):
-        self.state = "active"
+    async def on_trigger_start(self, trigger_context: TriggerContext) -> bool:
+        if self.trigger_delay > 0:
+            await asyncio.sleep(self.trigger_delay)
+            return not self.is_triggered
 
+        return False
+
+    async def after_activate(self, trigger_context: TriggerContext):
         activate_time = datetime.timestamp(datetime.now())
         context = (self, activate_time)
 
-        sleep(self.trigger_delay)
-
         for pin in self.trigger_pins:
-            pin.trigger(context)
+            await pin.trigger(context)

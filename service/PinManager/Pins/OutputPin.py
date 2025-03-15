@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from time import sleep
+import asyncio
 from typing import TYPE_CHECKING, Literal
 from .Pin import Pin
 
@@ -9,7 +9,8 @@ if TYPE_CHECKING:
 
 import RPi.GPIO as GPIO
 
-type OutputTriggerMethodName = Literal["pulse", "hold", "while_input"]
+type OutputTriggerMethodName = Literal["pulse", "hold"]
+# type OutputTriggerMethodName = Literal["pulse", "hold", "while_input"]
 
 
 class OutputPin(Pin):
@@ -27,47 +28,38 @@ class OutputPin(Pin):
         self.trigger_method_name = trigger_type
         self.hold_time = hold_time
 
-    def trigger(self, context: TriggerContext):
-        self.trigger_start()
-        if self.is_blocked:
-            return
-        self.activate(context)
-        self.deactivate()
-        self.trigger_end()
-
-    def activate(self, trigger_context: TriggerContext):
+    async def after_activate(self, trigger_context: TriggerContext):
         match self.trigger_method_name:
             case "pulse":
-                self._trigger_pulse()
+                await self._trigger_pulse()
             case "hold":
-                self._trigger_hold()
-            case "while_input":
-                self._trigger_while_input(trigger_context)
+                await self._trigger_hold()
+            # case "while_input":
+            #     await self._trigger_while_input(trigger_context)
 
-    def deactivate(self):
+    async def before_deactivate(self):
         GPIO.output(self._gpio_pin, GPIO.LOW)
-        self.state = "inactive"
 
     # --- Trigger Methods ---
 
-    def _trigger_pulse(self):
+    async def _trigger_pulse(self):
         # pulse all trigger pins
         GPIO.output(self._gpio_pin, GPIO.HIGH)
-        sleep(0.1)
+        await asyncio.sleep(0.1)
         GPIO.output(self._gpio_pin, GPIO.LOW)
 
-    def _trigger_hold(self):
+    async def _trigger_hold(self):
         # hold all trigger pins
         GPIO.output(self._gpio_pin, GPIO.HIGH)
-        sleep(self.hold_time)
+        await asyncio.sleep(self.hold_time)
         GPIO.output(self._gpio_pin, GPIO.LOW)
 
-    def _trigger_while_input(self, trigger_context: TriggerContext):
-        [trigger_pin, _] = trigger_context
+    # async def _trigger_while_input(self, trigger_context: TriggerContext):
+    #     [trigger_pin, _] = trigger_context
 
-        GPIO.output(self._gpio_pin, GPIO.HIGH)
+    #     GPIO.output(self._gpio_pin, GPIO.HIGH)
 
-        while GPIO.input(trigger_pin.gpio_pin) == GPIO.HIGH:
-            pass
+    #     while GPIO.input(trigger_pin.gpio_pin) == GPIO.HIGH:
+    #         pass
 
-        GPIO.output(self._gpio_pin, GPIO.LOW)
+    #     GPIO.output(self._gpio_pin, GPIO.LOW)

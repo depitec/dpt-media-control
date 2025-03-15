@@ -25,7 +25,7 @@ class VirtualPin(Pin):
     def set_pin_adress(self, pin_adress: str):
         self.pin_adress = pin_adress
 
-    def activate(self, trigger_context: TriggerContext):
+    def after_activate(self, trigger_context: TriggerContext):
         match self.virtual_pin_method_name:
             case "pjlink_power_on":
                 self._trigger_pjlink_power_on(trigger_context)

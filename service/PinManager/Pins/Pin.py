@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING, final
 
 if TYPE_CHECKING:
     from ..PinManager import TriggerContext
@@ -17,7 +17,7 @@ class Pin:
     _name: str
     display_name: str
     state: PinState
-    is_triggered: bool
+    _is_triggered: bool
     is_blocked: bool
     pins_to_unblock: list[type[Pin]]
     pins_to_block: list[type[Pin]]
@@ -38,7 +38,7 @@ class Pin:
         self._pin_type = pin_type
         self.display_name = name
         self.state = "inactive"
-        self.is_triggered = False
+        self._is_triggered = False
         self.is_blocked = is_blocked
         self.pins_to_unblock = unblock_pins
         self.pins_to_block = pins_to_block
@@ -55,6 +55,14 @@ class Pin:
     @property
     def pin_type(self):
         return self._pin_type
+
+    @property
+    def is_triggered(self):
+        return self._is_triggered
+
+    @is_triggered.setter
+    def is_triggered(self, value: bool):
+        self._is_triggered = value
 
     def set_display_name(self, display_name: str):
         self.display_name = display_name
@@ -80,26 +88,44 @@ class Pin:
         for pin in pins:
             pin.is_blocked = False
 
-    def trigger_start(self):
-        self.is_triggered = True
+    async def on_trigger_start(self, trigger_context: TriggerContext) -> bool:
+        return False
 
-    def trigger_end(self):
-        self.is_triggered = False
+    async def on_trigger_end(self, trigger_context: TriggerContext):
+        pass
 
-    def activate(self, context: TriggerContext):
+    async def after_activate(self, trigger_context: TriggerContext):
+        pass
+
+    async def before_deactivate(self):
+        pass
+
+    @final
+    async def activate(self, context: TriggerContext):
         self.state = "active"
 
         [trigger_pin, timestamp] = context
         print(
             f"Pin {self.name} activated. Triggered by {trigger_pin.name} at {timestamp}"
         )
+        await self.after_activate(context)
 
-    def deactivate(self):
+    @final
+    async def deactivate(self):
+        print(f"Pin {self.name} deactivated")
         self.state = "inactive"
 
-    def trigger(self, trigger_context: TriggerContext):
+        await self.before_deactivate()
+
+    @final
+    async def trigger(self, trigger_context: TriggerContext):
+        if self.state == "active":
+            return
+
         # Pin got triggered
-        self.trigger_start()
+        stop = await self.on_trigger_start(trigger_context)
+        if stop:
+            return
         # Check if pin is blocked and return if it is
         if self.is_blocked:
             return
@@ -108,12 +134,12 @@ class Pin:
         # Unblock pins that should be unblocked
         self.unblock_pins(self.pins_to_unblock)
         # Activate Pin functionality
-        self.activate(trigger_context)
+        await self.activate(trigger_context)
         # Deactivate Pin functionality
-        self.deactivate()
+        await self.deactivate()
         # Unblock pins that where blocked
         self.unblock_pins(self.pins_to_block)
         # Block pins that where unblocked
         self.block_pins(self.pins_to_unblock)
         # Pin trigger ended
-        self.trigger_end()
+        await self.on_trigger_end(trigger_context)
