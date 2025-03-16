@@ -15,8 +15,8 @@ type TriggerablePins = Union[OutputPin, VirtualPin]
 
 
 class InputPin(Pin):
-    trigger_pins: list[TriggerablePins]
-    trigger_delay: float
+    _trigger_pins: list[TriggerablePins]
+    _trigger_delay: float
 
     def __init__(
         self,
@@ -24,14 +24,31 @@ class InputPin(Pin):
         gpio_pin: int,
     ):
         super().__init__(name, gpio_pin, "input")
-        self.trigger_pins = []
-        self.trigger_delay = 0
+        self._trigger_pins = []
+        self._trigger_delay = 0
+
+    # === PROPERTIES ===
+    # --- Trigger Pins ---
+    @property
+    def trigger_pins(self):
+        return self._trigger_pins
 
     def add_trigger_pin(self, pin: TriggerablePins):
-        self.trigger_pins.append(pin)
+        self._trigger_pins.append(pin)
 
     def remove_trigger_pin(self, pin: TriggerablePins):
-        self.trigger_pins.remove(pin)
+        self._trigger_pins.remove(pin)
+
+    # --- Trigger Delay ---
+    @property
+    def trigger_delay(self):
+        return self._trigger_delay
+
+    @trigger_delay.setter
+    def trigger_delay(self, value: float):
+        self._trigger_delay = value
+
+    # === METHODS ===
 
     async def on_trigger_start(self, trigger_context: TriggerContext) -> bool:
         if self.trigger_delay > 0:

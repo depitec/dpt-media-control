@@ -13,8 +13,8 @@ type VirtualPinMethodName = Literal["pjlink_power_on", "pjlink_power_off"]
 
 
 class VirtualPin(Pin):
-    pin_adress: str
-    virtual_pin_method_name: VirtualPinMethodName
+    _pin_adress: str
+    _virtual_pin_method_name: VirtualPinMethodName
 
     def __init__(
         self,
@@ -22,11 +22,28 @@ class VirtualPin(Pin):
     ):
         super().__init__(name, -1, "virtual")
 
+    # === PROPERTIES ===
+    # --- Pin Adress ---
+    @property
+    def pin_adress(self):
+        return self._pin_adress
+
+    # --- Virtual Pin Method Name ---
+    @property
+    def virtual_pin_method_name(self):
+        return self._virtual_pin_method_name
+
+    @virtual_pin_method_name.setter
+    def virtual_pin_method_name(self, value: VirtualPinMethodName):
+        self._virtual_pin_method_name = value
+
+    # === METHODS ===
+
     def set_pin_adress(self, pin_adress: str):
-        self.pin_adress = pin_adress
+        self._pin_adress = pin_adress
 
     async def after_activate(self, trigger_context: TriggerContext):
-        match self.virtual_pin_method_name:
+        match self._virtual_pin_method_name:
             case "pjlink_power_on":
                 self._trigger_pjlink_power_on(trigger_context)
 

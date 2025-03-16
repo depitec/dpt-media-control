@@ -25,8 +25,9 @@ if __name__ == "__main__":
         input1.add_trigger_pin(output1)
         input2.add_trigger_pin(output2)
 
-        output1.trigger_method_name = "pulse"
-        output2.trigger_method_name = "pulse"
+        output1.hold_time = 3
+        output1.trigger_method_name = "hold"
+        output2.trigger_method_name = "while_input"
 
         pin_manager.start_event_loop()
 

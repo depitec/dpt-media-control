@@ -15,13 +15,13 @@ class Pin:
     _gpio_pin: int
     _pin_type: PinType
     _name: str
-    display_name: str
-    state: PinState
+    _display_name: str
+    _state: PinState
     _is_triggered: bool
-    is_blocked: bool
-    pins_to_unblock: list[type[Pin]]
-    pins_to_block: list[type[Pin]]
-    trigger_delay: float
+    _is_blocked: bool
+    _pins_to_unblock: list[type[Pin]]
+    _pins_to_block: list[type[Pin]]
+    _trigger_delay: float
 
     def __init__(
         self,
@@ -31,31 +31,34 @@ class Pin:
         is_blocked: bool = False,
         unblock_pins: list[type[Pin]] = [],
         pins_to_block: list[type[Pin]] = [],
-        trigger_delay: float = 0,
     ):
         self._name = name
         self._gpio_pin = gpio_pin
         self._pin_type = pin_type
-        self.display_name = name
-        self.state = "inactive"
+        self._display_name = name
+        self._state = "inactive"
         self._is_triggered = False
-        self.is_blocked = is_blocked
-        self.pins_to_unblock = unblock_pins
-        self.pins_to_block = pins_to_block
-        self.trigger_delay = trigger_delay
+        self._is_blocked = is_blocked
+        self._pins_to_unblock = unblock_pins
+        self._pins_to_block = pins_to_block
 
+    # === PROPERTIES ===
+    # --- Name ---
     @property
     def name(self):
         return self._name
 
+    # --- GPIO Pin ---
     @property
     def gpio_pin(self):
         return self._gpio_pin
 
+    # --- Pin Type ---
     @property
     def pin_type(self):
         return self._pin_type
 
+    # --- Is Triggered ---
     @property
     def is_triggered(self):
         return self._is_triggered
@@ -64,22 +67,55 @@ class Pin:
     def is_triggered(self, value: bool):
         self._is_triggered = value
 
-    def set_display_name(self, display_name: str):
-        self.display_name = display_name
+    # --- Is Blocked ---
+    @property
+    def is_blocked(self):
+        return self._is_blocked
 
-    # TODO: add @property and @setter for unblock_pins, block_pins + validation
+    @is_blocked.setter
+    def is_blocked(self, value: bool):
+        self._is_blocked = value
+
+    # --- Display Name ---
+    @property
+    def display_name(self):
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, value: str):
+        self._display_name = value
+
+    # --- State ---
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, value: PinState):
+        self._state = value
+
+    # --- Block/Unblock Pins ---
+    @property
+    def pins_to_block(self):
+        return self._pins_to_block
+
+    @property
+    def pins_to_unblock(self):
+        return self._pins_to_unblock
+
     def add_unblock_pin(self, pin: type[Pin]):
-        self.pins_to_unblock.append(pin)
+        self._pins_to_unblock.append(pin)
 
     def add_block_pin(self, pin: type[Pin]):
-        self.pins_to_block.append(pin)
+        self._pins_to_block.append(pin)
 
     def remove_unblock_pin(self, pin: type[Pin]):
-        self.pins_to_unblock.remove(pin)
+        self._pins_to_unblock.remove(pin)
 
     def remove_block_pin(self, pin: type[Pin]):
-        self.pins_to_block.remove(pin)
+        self._pins_to_block.remove(pin)
 
+    # --- Methods ---
     def block_pins(self, pins: list[type[Pin]]):
         for pin in pins:
             pin.is_blocked = True
