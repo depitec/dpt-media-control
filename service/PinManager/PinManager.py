@@ -78,11 +78,11 @@ class PinManager:
     def unregister_pin(self, pin: InputPin | OutputPin):
         if pin.pin_type == "input":
             del self.pins[pin.name]
-            GPIO.cleanup(pin._gpio_pin)
+            GPIO.cleanup(pin.gpio_pin)
 
         if pin.pin_type == "output":
             del self.pins[pin.name]
-            GPIO.cleanup(pin._gpio_pin)
+            GPIO.cleanup(pin.gpio_pin)
 
         if pin.pin_type == "virtual":
             del self.pins[pin.name]
@@ -96,25 +96,25 @@ class PinManager:
         return None
 
     def get_input_pins(self):
-        input_pins = []
+        input_pins: list[InputPin] = []
         for pin in self.pins.values():
             if pin.pin_type == "input":
-                input_pins.append(pin)
-        return cast(list[InputPin], input_pins)
+                input_pins.append(cast(InputPin, pin))
+        return input_pins
 
     def get_output_pins(self):
-        output_pins = []
+        output_pins: list[OutputPin] = []
         for pin in self.pins.values():
             if pin.pin_type == "output":
-                output_pins.append(pin)
-        return cast(list[OutputPin], output_pins)
+                output_pins.append(cast(OutputPin, pin))
+        return output_pins
 
     def get_virtual_pins(self):
-        virtual_pins = []
+        virtual_pins: list[VirtualPin] = []
         for pin in self.pins.values():
             if pin.pin_type == "virtual":
-                virtual_pins.append(pin)
-        return cast(list[VirtualPin], virtual_pins)
+                virtual_pins.append(cast(VirtualPin, pin))
+        return virtual_pins
 
     async def on_input_callback(self, pin: InputPin):
         while True:

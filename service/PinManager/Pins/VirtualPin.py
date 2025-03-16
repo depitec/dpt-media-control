@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pypjlink import Projector
+from pypjlink import Projector  # type: ignore
 
 from .Pin import Pin
 
@@ -25,7 +25,7 @@ class VirtualPin(Pin):
     def set_pin_adress(self, pin_adress: str):
         self.pin_adress = pin_adress
 
-    def after_activate(self, trigger_context: TriggerContext):
+    async def after_activate(self, trigger_context: TriggerContext):
         match self.virtual_pin_method_name:
             case "pjlink_power_on":
                 self._trigger_pjlink_power_on(trigger_context)
@@ -35,11 +35,11 @@ class VirtualPin(Pin):
 
     # --- Trigger Methods ---
     def _trigger_pjlink_power_on(self, trigger_context: TriggerContext):
-        with Projector.from_address(self.pin_adress) as projector:
-            projector.authenticate()
-            projector.set_power("on")
+        with Projector.from_address(self.pin_adress) as projector:  # type: ignore
+            projector.authenticate()  # type: ignore
+            projector.set_power("on")  # type: ignore
 
     def _trigger_pjlink_power_off(self, trigger_context: TriggerContext):
-        with Projector.from_address(self.pin_adress) as projector:
-            projector.authenticate()
-            projector.set_power("off")
+        with Projector.from_address(self.pin_adress) as projector:  # type: ignore
+            projector.authenticate()  # type: ignore
+            projector.set_power("off")  # type: ignore
