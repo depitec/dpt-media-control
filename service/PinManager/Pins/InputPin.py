@@ -44,5 +44,6 @@ class InputPin(Pin):
         activate_time = datetime.timestamp(datetime.now())
         context = (self, activate_time)
 
+        loop = asyncio.get_event_loop()
         for pin in self.trigger_pins:
-            await pin.trigger(context)
+            loop.create_task(pin.trigger(context))

@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 
 import RPi.GPIO as GPIO
 
-type OutputTriggerMethodName = Literal["pulse", "hold"]
-# type OutputTriggerMethodName = Literal["pulse", "hold", "while_input"]
+# type OutputTriggerMethodName = Literal["pulse", "hold"]
+type OutputTriggerMethodName = Literal["pulse", "hold", "while_input"]
 
 
 class OutputPin(Pin):
@@ -34,8 +34,8 @@ class OutputPin(Pin):
                 await self._trigger_pulse()
             case "hold":
                 await self._trigger_hold()
-            # case "while_input":
-            #     await self._trigger_while_input(trigger_context)
+            case "while_input":
+                await self._trigger_while_input(trigger_context)
 
     async def before_deactivate(self):
         GPIO.output(self._gpio_pin, GPIO.LOW)
@@ -54,12 +54,10 @@ class OutputPin(Pin):
         await asyncio.sleep(self.hold_time)
         GPIO.output(self._gpio_pin, GPIO.LOW)
 
-    # async def _trigger_while_input(self, trigger_context: TriggerContext):
-    #     [trigger_pin, _] = trigger_context
+    async def _trigger_while_input(self, trigger_context: TriggerContext):
+        [trigger_pin, _] = trigger_context
+        while trigger_pin.is_triggered:
+            GPIO.output(self._gpio_pin, GPIO.HIGH)
+            await asyncio.sleep(0.1)
 
-    #     GPIO.output(self._gpio_pin, GPIO.HIGH)
-
-    #     while GPIO.input(trigger_pin.gpio_pin) == GPIO.HIGH:
-    #         pass
-
-    #     GPIO.output(self._gpio_pin, GPIO.LOW)
+        GPIO.output(self._gpio_pin, GPIO.LOW)
