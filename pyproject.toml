@@ -4,7 +4,19 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
+authors = [
+    { name = "Jan Schmidt", email = "j.schmidt@depitec.de" }
+]
+
 dependencies = [
     "pypjlink2>=1.2.2",
     "rpi-lgpio>=0.6",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
