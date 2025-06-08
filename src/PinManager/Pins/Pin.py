@@ -18,9 +18,8 @@ class Pin:
     _display_name: str
     _state: PinState
     _is_triggered: bool
-    _is_blocked: bool
-    _pins_to_unblock: list[type[Pin]]
-    _pins_to_block: list[type[Pin]]
+    _pins_to_unblock: list[Pin]
+    _pins_to_block: list[Pin]
     _trigger_delay: float
 
     def __init__(
@@ -29,8 +28,8 @@ class Pin:
         gpio_pin: int,  # fixed value never change
         pin_type: PinType,  # fixed value never change
         is_blocked: bool = False,
-        unblock_pins: list[type[Pin]] = [],
-        pins_to_block: list[type[Pin]] = [],
+        unblock_pins: list[Pin] = [],
+        pins_to_block: list[Pin] = [],
     ):
         self._name = name
         self._gpio_pin = gpio_pin
@@ -103,24 +102,24 @@ class Pin:
     def pins_to_unblock(self):
         return self._pins_to_unblock
 
-    def add_unblock_pin(self, pin: type[Pin]):
+    def add_unblock_pin(self, pin: Pin):
         self._pins_to_unblock.append(pin)
 
-    def add_block_pin(self, pin: type[Pin]):
+    def add_block_pin(self, pin: Pin):
         self._pins_to_block.append(pin)
 
-    def remove_unblock_pin(self, pin: type[Pin]):
+    def remove_unblock_pin(self, pin: Pin):
         self._pins_to_unblock.remove(pin)
 
-    def remove_block_pin(self, pin: type[Pin]):
+    def remove_block_pin(self, pin: Pin):
         self._pins_to_block.remove(pin)
 
     # --- Methods ---
-    def block_pins(self, pins: list[type[Pin]]):
+    def block_pins(self, pins: list[Pin]):
         for pin in pins:
             pin.is_blocked = True
 
-    def unblock_pins(self, pins: list[type[Pin]]):
+    def unblock_pins(self, pins: list[Pin]):
         for pin in pins:
             pin.is_blocked = False
 
