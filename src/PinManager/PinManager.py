@@ -32,18 +32,12 @@ class PinManager:
     def register_pin(self, pin_number: int, pin_type: Literal["input"]) -> InputPin: ...
 
     @overload
-    def register_pin(
-        self, pin_number: int, pin_type: Literal["output"]
-    ) -> OutputPin: ...
+    def register_pin(self, pin_number: int, pin_type: Literal["output"]) -> OutputPin: ...
 
     @overload
-    def register_pin(
-        self, pin_number: int, pin_type: Literal["virtual"]
-    ) -> VirtualPin: ...
+    def register_pin(self, pin_number: int, pin_type: Literal["virtual"]) -> VirtualPin: ...
 
-    def register_pin(
-        self, pin_number: int, pin_type: PinType
-    ) -> InputPin | OutputPin | VirtualPin:
+    def register_pin(self, pin_number: int, pin_type: PinType) -> InputPin | OutputPin | VirtualPin:
         # if self.has_pin_been_setup(pin_number):
         #     return
 
@@ -87,9 +81,7 @@ class PinManager:
         if pin.pin_type == "virtual":
             del self.pins[pin.name]
 
-    def get_pin_by_gpio(
-        self, gpio_pin: int
-    ) -> InputPin | OutputPin | VirtualPin | None:
+    def get_pin_by_gpio(self, gpio_pin: int) -> InputPin | OutputPin | VirtualPin | None:
         for pin in self.pins.values():
             if pin.gpio_pin == gpio_pin:
                 return pin
@@ -120,15 +112,13 @@ class PinManager:
         while True:
             if GPIO.input(pin.gpio_pin) and not pin.is_triggered:
                 trigger_context = (pin, datetime.timestamp(datetime.now()))
-                pin.is_triggered = True
-                print(f"Pin {pin.name} triggered")
 
                 loop = asyncio.get_event_loop()
                 loop.create_task(pin.trigger(trigger_context))
 
             if not GPIO.input(pin.gpio_pin) and pin.is_triggered:
                 print(f"Pin {pin.name} released")
-                pin.is_triggered = False
+                pin.untrigger()
 
             await asyncio.sleep(0.1)
 

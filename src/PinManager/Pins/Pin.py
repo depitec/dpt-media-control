@@ -141,9 +141,7 @@ class Pin:
         self.state = "active"
 
         [trigger_pin, timestamp] = context
-        print(
-            f"Pin {self.name} activated. Triggered by {trigger_pin.name} at {timestamp}"
-        )
+        print(f"Pin {self.name} activated. Triggered by {trigger_pin.name} at {timestamp}")
         await self.after_activate(context)
 
     @final
