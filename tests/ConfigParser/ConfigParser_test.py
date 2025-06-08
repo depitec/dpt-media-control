@@ -13,4 +13,5 @@ def test_read_config():
     config = config_parser.config
 
     assert config["Project"]["name"] == "dpt-media-control"
-    assert config["Pins"][0]["name"] == "pin1"
+    assert config["InputPins"][0]["hold_time"] == 10
+    assert config["InputPins"][1]["name"] == "pin2"

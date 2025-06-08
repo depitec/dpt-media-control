@@ -4,7 +4,12 @@ version = "0.1.0"
 description = "A media control service for the DPT"
 authors = ["Jan <jan@depitec.de>"]
 
-[[Pins]]
+[[InputPins]]
 name = "pin1"
-type = "input"
 gpio = 1
+hold_time = 10
+
+[[InputPins]]
+name = "pin2"
+gpio = 2
+hold_time = 20
