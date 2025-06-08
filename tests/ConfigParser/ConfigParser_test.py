@@ -5,13 +5,12 @@ from pathlib import Path
 TEST_DIR_PATH = Path(__file__).parent
 
 
-def test_read_config():
-    config_path = Path(TEST_DIR_PATH, "resources", "testconfig.toml").absolute()
-    config_parser = ConfigParser(config_path.as_posix())
+class TestConfigParser:
+    def test_read_config(self):
+        config_path = Path(TEST_DIR_PATH, "resources", "testconfig.toml").absolute()
+        config_parser = ConfigParser(config_path.as_posix())
+        config = config_parser.read_config()
 
-    config_parser.read_config()
-    config = config_parser.config
-
-    assert config["Project"]["name"] == "dpt-media-control"
-    assert config["InputPins"][0]["hold_time"] == 10
-    assert config["InputPins"][1]["name"] == "pin2"
+        assert config["Project"]["name"] == "dpt-media-control"
+        assert config["InputPins"][0]["hold_time"] == 10
+        assert config["InputPins"][1]["name"] == "pin2"

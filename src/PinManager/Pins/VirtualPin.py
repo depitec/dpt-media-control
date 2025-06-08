@@ -13,14 +13,18 @@ type VirtualPinMethodName = Literal["pjlink_power_on", "pjlink_power_off"]
 
 
 class VirtualPin(Pin):
-    _pin_adress: str
-    _virtual_pin_method_name: VirtualPinMethodName
+    _pin_adress: str | None
+    _virtual_pin_method_name: VirtualPinMethodName | None
+    _trigger_delay: float
 
     def __init__(
         self,
         name: str,
     ):
         super().__init__(name, -1, "virtual")
+        self._trigger_delay = 0
+        self._pin_adress = None
+        self._virtual_pin_method_name = None
 
     # === PROPERTIES ===
     # --- Pin Adress ---
@@ -43,6 +47,9 @@ class VirtualPin(Pin):
         self._pin_adress = pin_adress
 
     async def after_activate(self, trigger_context: TriggerContext):
+        if (self._virtual_pin_method_name is None) or (self._pin_adress is None):
+            return
+
         match self._virtual_pin_method_name:
             case "pjlink_power_on":
                 self._trigger_pjlink_power_on(trigger_context)

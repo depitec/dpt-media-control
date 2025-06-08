@@ -20,7 +20,6 @@ class Pin:
     _is_triggered: bool
     _pins_to_unblock: list[Pin]
     _pins_to_block: list[Pin]
-    _trigger_delay: float
 
     def __init__(
         self,
@@ -149,6 +148,10 @@ class Pin:
         await self.before_deactivate()
 
     @final
+    def untrigger(self):
+        self._is_triggered = False
+
+    @final
     async def trigger(self, trigger_context: TriggerContext):
         self._is_triggered = True
         if self._state == "active" or self._state == "blocked":
@@ -173,6 +176,4 @@ class Pin:
         # Pin trigger ended
         await self.on_trigger_end(trigger_context)
 
-    @final
-    def untrigger(self):
-        self._is_triggered = False
+        self.untrigger()
