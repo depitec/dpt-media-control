@@ -22,8 +22,8 @@ if __name__ == "__main__":
         input2 = pin_manager.register_pin(23, "input")
         output2 = pin_manager.register_pin(24, "output")
 
-        input1.add_trigger_pin(output1)
-        input2.add_trigger_pin(output2)
+        input1.add_triggered_pin(output1)
+        input2.add_triggered_pin(output2)
 
         output1.hold_time = 3
         output1.trigger_method_name = "hold"
