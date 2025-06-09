@@ -63,6 +63,10 @@ class Pin:
     def is_triggered(self):
         return self._is_triggered
 
+    @is_triggered.setter
+    def is_triggered(self, value: bool):
+        self._is_triggered = value
+
     # --- Is Blocked ---
     @property
     def is_blocked(self):
@@ -148,12 +152,11 @@ class Pin:
         await self.before_deactivate()
 
     @final
-    def untrigger(self):
-        self._is_triggered = False
+    def untrigger(self, trigger_context: TriggerContext):
+        pass
 
     @final
     async def trigger(self, trigger_context: TriggerContext):
-        self._is_triggered = True
         if self._state == "active" or self._state == "blocked":
             return
         # Pin got triggered
@@ -175,5 +178,3 @@ class Pin:
         self.block_pins(self.pins_to_unblock)
         # Pin trigger ended
         await self.on_trigger_end(trigger_context)
-
-        self.untrigger()

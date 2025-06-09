@@ -76,9 +76,11 @@ class OutputPin(Pin):
         GPIO.output(self._gpio_pin, GPIO.LOW)
 
     async def _trigger_while_input(self, trigger_context: TriggerContext):
-        [trigger_pin, _] = trigger_context
-        while trigger_pin.is_triggered:
-            GPIO.output(self._gpio_pin, GPIO.HIGH)
-            await asyncio.sleep(0.1)
+        GPIO.output(self._gpio_pin, GPIO.HIGH)
+        while True:
+            if not trigger_context[0].is_triggered:
+                break
+
+            await asyncio.sleep(0.2)
 
         GPIO.output(self._gpio_pin, GPIO.LOW)

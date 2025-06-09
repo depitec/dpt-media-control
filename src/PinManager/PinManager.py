@@ -110,15 +110,17 @@ class PinManager:
 
     async def on_input_callback(self, pin: InputPin):
         while True:
+            trigger_context = (pin, datetime.timestamp(datetime.now()))
             if GPIO.input(pin.gpio_pin) and not pin.is_triggered:
-                trigger_context = (pin, datetime.timestamp(datetime.now()))
-
+                pin.is_triggered = True
+                print(f"Pin {pin.name} triggered")
                 loop = asyncio.get_event_loop()
                 loop.create_task(pin.trigger(trigger_context))
 
             if not GPIO.input(pin.gpio_pin) and pin.is_triggered:
+                pin.is_triggered = False
                 print(f"Pin {pin.name} released")
-                pin.untrigger()
+                pin.untrigger(trigger_context)
 
             await asyncio.sleep(0.1)
 
