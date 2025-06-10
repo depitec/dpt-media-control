@@ -1,8 +1,5 @@
 [Project]
 name = "dpt-media-control"
-version = "0.1.0"
-description = "A media control service for the DPT"
-authors = ["Jan <jan@depitec.de>"]
 
 [[InputPins]]
 name = "pin1"
