@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from typing import Literal, TYPE_CHECKING, final
 
 if TYPE_CHECKING:
@@ -18,8 +17,8 @@ class Pin:
     _display_name: str
     _state: PinState
     _is_triggered: bool
-    _pins_to_unblock: list[Pin]
     _pins_to_block: list[Pin]
+    _pins_to_unblock: list[Pin]
 
     def __init__(
         self,
@@ -27,8 +26,8 @@ class Pin:
         gpio_pin: int,  # fixed value never change
         pin_type: PinType,  # fixed value never change
         is_blocked: bool = False,
-        unblock_pins: list[Pin] = [],
         pins_to_block: list[Pin] = [],
+        pins_to_unblock: list[Pin] = [],
     ):
         self._id = id
         self._gpio_pin = gpio_pin
@@ -36,8 +35,8 @@ class Pin:
         self._display_name = id
         self._state = "inactive"
         self._is_triggered = False
-        self._pins_to_unblock = unblock_pins
         self._pins_to_block = pins_to_block
+        self._pins_to_unblock = pins_to_unblock
 
         if is_blocked:
             self._state = "blocked"
