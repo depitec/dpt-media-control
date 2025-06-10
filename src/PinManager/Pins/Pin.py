@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Literal, TYPE_CHECKING, final
+
+from typing import TYPE_CHECKING, Literal, final
 
 if TYPE_CHECKING:
     from ..PinManager import TriggerContext
@@ -26,8 +27,8 @@ class Pin:
         gpio_pin: int,  # fixed value never change
         pin_type: PinType,  # fixed value never change
         is_blocked: bool = False,
-        pins_to_block: list[Pin] = [],
-        pins_to_unblock: list[Pin] = [],
+        pins_to_block: list[Pin] | None = None,
+        pins_to_unblock: list[Pin] | None = None,
     ):
         self._id = id
         self._gpio_pin = gpio_pin
@@ -35,8 +36,9 @@ class Pin:
         self._display_name = id
         self._state = "inactive"
         self._is_triggered = False
-        self._pins_to_block = pins_to_block
-        self._pins_to_unblock = pins_to_unblock
+        # if set to [] if none
+        self._pins_to_block = pins_to_block if pins_to_block is not None else []
+        self._pins_to_unblock = pins_to_unblock if pins_to_unblock is not None else []
 
         if is_blocked:
             self._state = "blocked"

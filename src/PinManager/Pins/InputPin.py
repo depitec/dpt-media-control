@@ -1,10 +1,10 @@
 from __future__ import annotations
+
 import asyncio
+from datetime import datetime
+from typing import TYPE_CHECKING, Union
 
 from .Pin import Pin
-from typing import Union, TYPE_CHECKING
-from datetime import datetime
-
 
 if TYPE_CHECKING:
     from ..PinManager import TriggerContext
@@ -18,11 +18,7 @@ class InputPin(Pin):
     _pins_to_trigger: list[TriggerablePins]
     _activation_delay: float
 
-    def __init__(
-        self,
-        name: str,
-        gpio_pin: int,
-    ):
+    def __init__(self, name: str, gpio_pin: int):
         super().__init__(name, gpio_pin, "input")
         self._pins_to_trigger = []
         self._activation_delay = 0

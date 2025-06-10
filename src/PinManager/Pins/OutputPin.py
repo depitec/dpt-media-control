@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 from typing import TYPE_CHECKING, Literal
+
 from .Pin import Pin
 
 if TYPE_CHECKING:
@@ -17,13 +18,7 @@ class OutputPin(Pin):
     _trigger_method_name: OutputTriggerMethodName
     _hold_time: float
 
-    def __init__(
-        self,
-        name: str,
-        gpio_pin: int,
-        trigger_type: OutputTriggerMethodName = "pulse",
-        hold_time: float = 5,
-    ):
+    def __init__(self, name: str, gpio_pin: int, trigger_type: OutputTriggerMethodName = "pulse", hold_time: float = 5):
         super().__init__(name, gpio_pin, "output")
         self._trigger_method_name = trigger_type
         self._hold_time = hold_time

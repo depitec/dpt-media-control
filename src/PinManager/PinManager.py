@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import Dict, Literal, Union, TYPE_CHECKING, cast, Tuple, overload
-import RPi.GPIO as GPIO
-from .Pins import InputPin, OutputPin, VirtualPin
 
-from datetime import datetime
 import asyncio
+from datetime import datetime
+from typing import TYPE_CHECKING, Dict, Literal, Tuple, Union, cast, overload
+
+import RPi.GPIO as GPIO
+
+from .Pins import InputPin, OutputPin, VirtualPin
 
 if TYPE_CHECKING:
     from .Pins import PinType
@@ -133,3 +135,30 @@ class PinManager:
 
     def stop_event_loop(self):
         self.event_loop.stop()
+
+
+if __name__ == "__main__":
+    import RPi.GPIO as GPIO
+
+    try:
+        GPIO.setmode(GPIO.BCM)
+
+        pin_manager = PinManager()
+
+        input1 = pin_manager.register_pin(17, "input")
+        output1 = pin_manager.register_pin(27, "output")
+        input2 = pin_manager.register_pin(23, "input")
+        output2 = pin_manager.register_pin(24, "output")
+
+        input1.add_triggered_pin(output1)
+        input2.add_triggered_pin(output2)
+
+        output1.hold_time = 3
+        output1.trigger_method_name = "hold"
+        output2.trigger_method_name = "while_input"
+
+        pin_manager.start_event_loop()
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt")
+        GPIO.cleanup()
