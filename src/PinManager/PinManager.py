@@ -71,15 +71,15 @@ class PinManager:
 
     def unregister_pin(self, pin: InputPin | OutputPin):
         if pin.pin_type == "input":
-            del self.pins[pin.name]
+            del self.pins[pin.id]
             GPIO.cleanup(pin.gpio_pin)
 
         if pin.pin_type == "output":
-            del self.pins[pin.name]
+            del self.pins[pin.id]
             GPIO.cleanup(pin.gpio_pin)
 
         if pin.pin_type == "virtual":
-            del self.pins[pin.name]
+            del self.pins[pin.id]
 
     def get_pin_by_gpio(self, gpio_pin: int) -> InputPin | OutputPin | VirtualPin | None:
         for pin in self.pins.values():
@@ -113,13 +113,13 @@ class PinManager:
             trigger_context = (pin, datetime.timestamp(datetime.now()))
             if GPIO.input(pin.gpio_pin) and not pin.is_triggered:
                 pin.is_triggered = True
-                print(f"Pin {pin.name} triggered")
+                print(f"Pin {pin.id} triggered")
                 loop = asyncio.get_event_loop()
                 loop.create_task(pin.trigger(trigger_context))
 
             if not GPIO.input(pin.gpio_pin) and pin.is_triggered:
                 pin.is_triggered = False
-                print(f"Pin {pin.name} released")
+                print(f"Pin {pin.id} released")
                 pin.untrigger(trigger_context)
 
             await asyncio.sleep(0.1)

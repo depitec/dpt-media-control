@@ -14,7 +14,7 @@ type PinType = Literal["input", "output", "virtual"]
 class Pin:
     _gpio_pin: int
     _pin_type: PinType
-    _name: str
+    _id: str
     _display_name: str
     _state: PinState
     _is_triggered: bool
@@ -23,17 +23,17 @@ class Pin:
 
     def __init__(
         self,
-        name: str,
+        id: str,
         gpio_pin: int,  # fixed value never change
         pin_type: PinType,  # fixed value never change
         is_blocked: bool = False,
         unblock_pins: list[Pin] = [],
         pins_to_block: list[Pin] = [],
     ):
-        self._name = name
+        self._id = id
         self._gpio_pin = gpio_pin
         self._pin_type = pin_type
-        self._display_name = name
+        self._display_name = id
         self._state = "inactive"
         self._is_triggered = False
         self._pins_to_unblock = unblock_pins
@@ -45,8 +45,8 @@ class Pin:
     # === PROPERTIES ===
     # --- Name ---
     @property
-    def name(self):
-        return self._name
+    def id(self):
+        return self._id
 
     # --- GPIO Pin ---
     @property
@@ -141,12 +141,12 @@ class Pin:
         self._state = "active"
 
         [trigger_pin, timestamp] = context
-        print(f"Pin {self.name} activated. Triggered by {trigger_pin.name} at {timestamp}")
+        print(f"Pin {self.id} activated. Triggered by {trigger_pin.id} at {timestamp}")
         await self.after_activate(context)
 
     @final
     async def deactivate(self):
-        print(f"Pin {self.name} deactivated")
+        print(f"Pin {self.id} deactivated")
         self._state = "inactive"
 
         await self.before_deactivate()
