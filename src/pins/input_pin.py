@@ -4,12 +4,12 @@ import asyncio
 from datetime import datetime
 from typing import TYPE_CHECKING, Union
 
-from .Pin import Pin
+from .pin import Pin
 
 if TYPE_CHECKING:
-    from ..MediaControl import TriggerContext
-    from .OutputPin import OutputPin
-    from .VirtualPin import VirtualPin
+    from ..media_control import TriggerContext
+    from .output_pin import OutputPin
+    from .virtual_pin import VirtualPin
 
 type TriggerablePins = Union[OutputPin, VirtualPin]
 

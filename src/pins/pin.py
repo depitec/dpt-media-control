@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Literal, final
 
 if TYPE_CHECKING:
-    from ..MediaControl import TriggerContext
+    from ..media_control import TriggerContext
 
 type PinState = Literal["active", "inactive", "blocked"]
 

@@ -6,10 +6,10 @@ from typing import TYPE_CHECKING, Dict, Literal, Tuple, Union, cast, overload
 
 import RPi.GPIO as GPIO
 
-from .Pins import InputPin, OutputPin, VirtualPin
+from .pins import InputPin, OutputPin, VirtualPin
 
 if TYPE_CHECKING:
-    from .Pins import PinType
+    from .pins import PinType
 
 type PinUnion = InputPin | OutputPin | VirtualPin
 

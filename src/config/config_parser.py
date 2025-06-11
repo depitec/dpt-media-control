@@ -7,9 +7,9 @@ from typing import TYPE_CHECKING, Optional, TypedDict
 import tomlkit
 
 if TYPE_CHECKING:
-    from ..Pins.InputPin import InputPin
-    from ..Pins.OutputPin import OutputPin
-    from ..Pins.VirtualPin import VirtualPin
+    from ..pins.input_pin import InputPin
+    from ..pins.output_pin import OutputPin
+    from ..pins.virtual_pin import VirtualPin
 
     class Project(TypedDict):
         name: str

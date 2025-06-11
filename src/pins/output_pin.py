@@ -3,10 +3,10 @@ from __future__ import annotations
 import asyncio
 from typing import TYPE_CHECKING, Literal
 
-from .Pin import Pin
+from .pin import Pin
 
 if TYPE_CHECKING:
-    from ..MediaControl import TriggerContext
+    from ..media_control import TriggerContext
 
 import RPi.GPIO as GPIO
 

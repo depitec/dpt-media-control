@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from pypjlink import Projector  # type: ignore
-
-from .Pin import Pin
-
 from typing import TYPE_CHECKING, Literal
 
+from pypjlink import Projector  # type: ignore
+
+from .pin import Pin
+
 if TYPE_CHECKING:
-    from .OutputPin import TriggerContext
+    from .output_pin import TriggerContext
 
 type VirtualPinMethodName = Literal["pjlink_power_on", "pjlink_power_off"]
 
@@ -17,10 +17,7 @@ class VirtualPin(Pin):
     _virtual_pin_method_name: VirtualPinMethodName | None
     _trigger_delay: float
 
-    def __init__(
-        self,
-        name: str,
-    ):
+    def __init__(self, name: str):
         super().__init__(name, -1, "virtual")
         self._trigger_delay = 0
         self._pin_adress = None
