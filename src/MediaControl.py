@@ -17,7 +17,7 @@ type PinUnion = InputPin | OutputPin | VirtualPin
 type TriggerContext = Tuple[InputPin | VirtualPin, float]  # (pin, timestamp)
 
 
-class PinManager:
+class MediaControl:
     pins: Dict[str, Union[InputPin, VirtualPin, OutputPin]]
     event_loop: asyncio.AbstractEventLoop
 
@@ -143,12 +143,12 @@ if __name__ == "__main__":
     try:
         GPIO.setmode(GPIO.BCM)
 
-        pin_manager = PinManager()
+        controller = MediaControl()
 
-        input1 = pin_manager.register_pin(17, "input")
-        output1 = pin_manager.register_pin(27, "output")
-        input2 = pin_manager.register_pin(23, "input")
-        output2 = pin_manager.register_pin(24, "output")
+        input1 = controller.register_pin(17, "input")
+        output1 = controller.register_pin(27, "output")
+        input2 = controller.register_pin(23, "input")
+        output2 = controller.register_pin(24, "output")
 
         input1.add_triggered_pin(output1)
         input2.add_triggered_pin(output2)
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         output1.trigger_method_name = "hold"
         output2.trigger_method_name = "while_input"
 
-        pin_manager.start_event_loop()
+        controller.start_event_loop()
 
     except KeyboardInterrupt:
         print("KeyboardInterrupt")

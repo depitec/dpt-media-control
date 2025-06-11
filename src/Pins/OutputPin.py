@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Literal
 from .Pin import Pin
 
 if TYPE_CHECKING:
-    from ..PinManager import TriggerContext
+    from ..MediaControl import TriggerContext
 
 import RPi.GPIO as GPIO
 

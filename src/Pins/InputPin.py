@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Union
 from .Pin import Pin
 
 if TYPE_CHECKING:
-    from ..PinManager import TriggerContext
+    from ..MediaControl import TriggerContext
     from .OutputPin import OutputPin
     from .VirtualPin import VirtualPin
 
