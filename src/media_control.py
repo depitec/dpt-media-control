@@ -147,27 +147,42 @@ class MediaControl:
 
 
 if __name__ == "__main__":
+    # get args from command line
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", help="path to config file", default="dpt-media-control.toml")
+
+    parser.add_argument("--no-rpi", help="try running without RPi.GPIO", action="store_true")
+
+    args = parser.parse_args()
+    config_file_path = args.config
+    no_rpi = args.no_rpi
+
     import RPi.GPIO as GPIO
 
     try:
-        GPIO.setmode(GPIO.BCM)
+        if not no_rpi:
+            GPIO.setmode(GPIO.BCM)
 
         controller = MediaControl("dpt-media-control.toml")
 
-        input1 = controller.register_pin(17, "input")
-        output1 = controller.register_pin(27, "output")
-        input2 = controller.register_pin(23, "input")
-        output2 = controller.register_pin(24, "output")
+        if not no_rpi:
+            input1 = controller.register_pin(17, "input")
+            output1 = controller.register_pin(27, "output")
+            input2 = controller.register_pin(23, "input")
+            output2 = controller.register_pin(24, "output")
 
-        input1.add_triggered_pin(output1)
-        input2.add_triggered_pin(output2)
+            input1.add_triggered_pin(output1)
+            input2.add_triggered_pin(output2)
 
-        output1.hold_time = 3
-        output1.trigger_method = "hold"
-        output2.trigger_method = "while_input"
+            output1.hold_time = 3
+            output1.trigger_method = "hold"
+            output2.trigger_method = "while_input"
 
         controller.start_event_loop()
 
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
-        GPIO.cleanup()
+        if not no_rpi:
+            GPIO.cleanup()
