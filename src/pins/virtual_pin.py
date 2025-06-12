@@ -15,11 +15,9 @@ type VirtualPinMethodName = Literal["pjlink_power_on", "pjlink_power_off"]
 class VirtualPin(Pin):
     _pin_adress: str | None
     _virtual_pin_method_name: VirtualPinMethodName | None
-    _trigger_delay: float
 
     def __init__(self, name: str):
         super().__init__(name, -1, "virtual")
-        self._trigger_delay = 0
         self._pin_adress = None
         self._virtual_pin_method_name = None
 
