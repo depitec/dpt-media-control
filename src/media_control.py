@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Dict, Literal, Tuple, Union, cast, overload
 
 import RPi.GPIO as GPIO
 
-from .config import ConfigParser
-from .pins import InputPin, OutputPin, VirtualPin
+from config import ConfigParser
+from pins import InputPin, OutputPin, VirtualPin
 
 if TYPE_CHECKING:
     from .pins import PinType
