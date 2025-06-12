@@ -1,0 +1,11 @@
+[Project]
+name = "dpt-media-control"
+
+[[InputPins]]
+name = "input1"
+gpio_pin = 1
+activation_delay = 0.5
+[[InputPins]]
+name = "input2"
+gpio_pin = 2
+activation_delay = 0.5
