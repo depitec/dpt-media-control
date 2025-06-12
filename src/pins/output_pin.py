@@ -15,23 +15,23 @@ type OutputTriggerMethodName = Literal["pulse", "hold", "while_input"]
 
 
 class OutputPin(Pin):
-    _trigger_method_name: OutputTriggerMethodName
+    _trigger_method: OutputTriggerMethodName
     _hold_time: float
 
     def __init__(self, name: str, gpio_pin: int, trigger_type: OutputTriggerMethodName = "pulse", hold_time: float = 5):
         super().__init__(name, gpio_pin, "output")
-        self._trigger_method_name = trigger_type
+        self._trigger_method = trigger_type
         self._hold_time = hold_time
 
     # === PROPERTIES ===
     # --- Trigger Method Name ---
     @property
-    def trigger_method_name(self):
-        return self._trigger_method_name
+    def trigger_method(self):
+        return self._trigger_method
 
-    @trigger_method_name.setter
-    def trigger_method_name(self, value: OutputTriggerMethodName):
-        self._trigger_method_name = value
+    @trigger_method.setter
+    def trigger_method(self, value: OutputTriggerMethodName):
+        self._trigger_method = value
 
     # --- Hold Time ---
     @property
@@ -45,7 +45,7 @@ class OutputPin(Pin):
     # === METHODS ===
 
     async def after_activate(self, trigger_context: TriggerContext):
-        match self._trigger_method_name:
+        match self._trigger_method:
             case "pulse":
                 await self._trigger_pulse()
             case "hold":
