@@ -27,6 +27,13 @@ class ConfigParser:
 
     def __init__(self, config_file_path: str | Path):
         self.config_file_path = Path(config_file_path)
+        self.init_check()
+
+    def init_check(self):
+        if not self.config_file_path.exists():
+            # create config file and parent directories if they don't exist
+            self.config_file_path.parent.mkdir(parents=True, exist_ok=True)
+            self.config_file_path.touch()
 
     def load_config(self):
         with open(self.config_file_path, "rb") as f:
