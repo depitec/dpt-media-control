@@ -18,10 +18,12 @@ type TriggerContext = Tuple[InputPin | VirtualPin, float]  # (pin, timestamp)
 
 
 class MediaControl:
+    prjoct_name: str
     pins: Dict[str, Union[InputPin, VirtualPin, OutputPin]]
     event_loop: asyncio.AbstractEventLoop
 
-    def __init__(self):
+    def __init__(self, project_name: str):
+        self.prjoct_name = project_name
         self.pins = {}
         self.event_loop = asyncio.new_event_loop()
 
@@ -154,8 +156,8 @@ if __name__ == "__main__":
         input2.add_triggered_pin(output2)
 
         output1.hold_time = 3
-        output1.trigger_method_name = "hold"
-        output2.trigger_method_name = "while_input"
+        output1.trigger_method = "hold"
+        output2.trigger_method = "while_input"
 
         controller.start_event_loop()
 
