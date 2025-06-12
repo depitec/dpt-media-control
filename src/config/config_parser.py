@@ -35,10 +35,13 @@ class ConfigParser:
             self.config_file_path.parent.mkdir(parents=True, exist_ok=True)
             self.config_file_path.touch()
 
-    def load_config(self):
+    def load_config(self) -> Config:
         with open(self.config_file_path, "rb") as f:
             config = tomlkit.load(f)
-            return config.unwrap()
+            config_dict = config.unwrap()
+            # typecase config_dict to Config
+            # retrn type is wrong see: https://github.com/python/mypy/issues/8890
+            return config_dict  # type: ignore
 
     def save_config(self, config: Config, with_timestamp: bool = False):
         config_file_path = self.config_file_path

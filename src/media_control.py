@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Dict, Literal, Tuple, Union, cast, overload
 import RPi.GPIO as GPIO
 
 from config import ConfigParser
+from config.config_parser import Config
 from pins import InputPin, OutputPin, VirtualPin
 
 if TYPE_CHECKING:
@@ -33,6 +34,11 @@ class MediaControl:
         self.pins = {}
         self.event_loop = asyncio.new_event_loop()
         self.config_parser = ConfigParser(config_path)
+
+        # load config and see if it contains values
+        config: Config = self.config_parser.load_config()
+        if len(config.keys()) > 0:
+            self.apply_config(config)
 
     def has_pin_been_setup(self, pin_number: int):
         # check if the gpio_pin has been setup
@@ -144,6 +150,9 @@ class MediaControl:
 
     def stop_event_loop(self):
         self.event_loop.stop()
+
+    def apply_config(self, config: Config):
+        pass
 
 
 if __name__ == "__main__":
