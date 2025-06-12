@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
+from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Literal, Tuple, Union, cast, overload
 
 import RPi.GPIO as GPIO
 
+from .config import ConfigParser
 from .pins import InputPin, OutputPin, VirtualPin
 
 if TYPE_CHECKING:
@@ -16,16 +18,21 @@ type PinUnion = InputPin | OutputPin | VirtualPin
 
 type TriggerContext = Tuple[InputPin | VirtualPin, float]  # (pin, timestamp)
 
+# Default config path is $HOME/.config/dpt-media-control/config.toml
+DEFAULT_CONFIG_PATH = Path.home() / ".config" / "dpt-media-control" / "config.toml"
+
 
 class MediaControl:
-    prjoct_name: str
+    prjoct_name: str | Path
     pins: Dict[str, Union[InputPin, VirtualPin, OutputPin]]
     event_loop: asyncio.AbstractEventLoop
+    config_parser: ConfigParser
 
-    def __init__(self, project_name: str):
+    def __init__(self, project_name: str, config_path: str | Path = DEFAULT_CONFIG_PATH):
         self.prjoct_name = project_name
         self.pins = {}
         self.event_loop = asyncio.new_event_loop()
+        self.config_parser = ConfigParser(config_path)
 
     def has_pin_been_setup(self, pin_number: int):
         # check if the gpio_pin has been setup
@@ -145,7 +152,7 @@ if __name__ == "__main__":
     try:
         GPIO.setmode(GPIO.BCM)
 
-        controller = MediaControl()
+        controller = MediaControl("dpt-media-control.toml")
 
         input1 = controller.register_pin(17, "input")
         output1 = controller.register_pin(27, "output")
