@@ -45,42 +45,56 @@ class MediaControl:
         return pin_function != GPIO.UNKNOWN
 
     @overload
-    def register_pin(self, pin_number: int, pin_type: Literal["input"]) -> InputPin: ...
+    def register_pin(self, pin_type: Literal["input"], gpio_pin: int, display_name: str | None = None) -> InputPin: ...
 
     @overload
-    def register_pin(self, pin_number: int, pin_type: Literal["output"]) -> OutputPin: ...
+    def register_pin(
+        self, pin_type: Literal["output"], gpio_pin: int, display_name: str | None = None
+    ) -> OutputPin: ...
 
     @overload
-    def register_pin(self, pin_number: int, pin_type: Literal["virtual"]) -> VirtualPin: ...
+    def register_pin(
+        self, pin_type: Literal["virtual"], gpio_pin: int, display_name: str | None = None
+    ) -> VirtualPin: ...
 
-    def register_pin(self, pin_number: int, pin_type: PinType) -> InputPin | OutputPin | VirtualPin:
+    def register_pin(
+        self, pin_type: PinType, gpio_pin: int, display_name: str | None = None
+    ) -> InputPin | OutputPin | VirtualPin:
         # if self.has_pin_been_setup(pin_number):
         #     return
 
         if pin_type == "input":
-            print(f"registering input pin {pin_number}")
-            GPIO.setup(pin_number, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-            input_pin_name = f"I#{pin_number}"
-            new_input_pin: InputPin = InputPin(input_pin_name, pin_number)
-            self.pins[input_pin_name] = new_input_pin
+            print(f"registering input pin {gpio_pin}")
+            GPIO.setup(gpio_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+            input_pin_id = f"I#{gpio_pin}"
+            new_input_pin: InputPin = InputPin(input_pin_id, gpio_pin)
+            new_input_pin.display_name = display_name if display_name else input_pin_id
+            self.pins[input_pin_id] = new_input_pin
 
             self.add_callback_to_eventloop(new_input_pin)
 
             return new_input_pin
 
         if pin_type == "output":
-            print(f"registering output pin {pin_number}")
-            GPIO.setup(pin_number, GPIO.OUT)
-            output_pin_name = f"O#{pin_number}"
-            new_output_pin: OutputPin = OutputPin(output_pin_name, pin_number)
-            self.pins[output_pin_name] = new_output_pin
+            print(f"registering output pin {gpio_pin}")
+            GPIO.setup(gpio_pin, GPIO.OUT)
+            output_pin_id = f"O#{gpio_pin}"
+            new_output_pin: OutputPin = OutputPin(output_pin_id, gpio_pin)
+            new_output_pin.display_name = display_name if display_name else output_pin_id
+
+            self.pins[output_pin_id] = new_output_pin
 
             return new_output_pin
 
         if pin_type == "virtual":
-            print(f"registering virtual pin {pin_number}")
-            virtual_pin_name = f"V#{pin_number}"
-            new_virtual_pin: VirtualPin = VirtualPin(virtual_pin_name)
+            if gpio_pin > 0:
+                raise ValueError("virtual pin must be negative")
+
+            print("registering virtual pin")
+            virtual_pin_name = f"V#{abs(gpio_pin)}"
+            new_virtual_pin: VirtualPin = VirtualPin(virtual_pin_name, gpio_pin)
+            new_virtual_pin.display_name = display_name if display_name else virtual_pin_name
+
             self.pins[virtual_pin_name] = new_virtual_pin
 
             return new_virtual_pin
@@ -176,10 +190,10 @@ if __name__ == "__main__":
         controller = MediaControl("dpt-media-control.toml")
 
         if not no_rpi:
-            input1 = controller.register_pin(17, "input")
-            output1 = controller.register_pin(27, "output")
-            input2 = controller.register_pin(23, "input")
-            output2 = controller.register_pin(24, "output")
+            input1 = controller.register_pin("input", 17)
+            output1 = controller.register_pin("output", 27)
+            input2 = controller.register_pin("input", 23)
+            output2 = controller.register_pin("output", 24)
 
             input1.add_triggered_pin(output1)
             input2.add_triggered_pin(output2)
