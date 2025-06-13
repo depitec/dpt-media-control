@@ -15,25 +15,25 @@ type TriggerablePins = Union[OutputPin, VirtualPin]
 
 
 class InputPin(Pin):
-    _pins_to_trigger: list[TriggerablePins]
+    _triggered_pins: list[TriggerablePins]
     _activation_delay: float
 
-    def __init__(self, name: str, gpio_pin: int):
-        super().__init__(name, gpio_pin, "input")
-        self._pins_to_trigger = []
+    def __init__(self, id: str, gpio_pin: int):
+        super().__init__(id, gpio_pin, "input")
+        self._triggered_pins = []
         self._activation_delay = 0
 
     # === PROPERTIES ===
     # --- Trigger Pins ---
     @property
-    def pins_to_trigger(self):
-        return self._pins_to_trigger
+    def triggered_pins(self):
+        return self._triggered_pins
 
     def add_triggered_pin(self, pin: TriggerablePins):
-        self._pins_to_trigger.append(pin)
+        self._triggered_pins.append(pin)
 
     def remove_triggered_pin(self, pin: TriggerablePins):
-        self._pins_to_trigger.remove(pin)
+        self._triggered_pins.remove(pin)
 
     # --- Trigger Delay ---
     @property
@@ -57,5 +57,5 @@ class InputPin(Pin):
         context = (self, activate_time)
 
         loop = asyncio.get_event_loop()
-        for pin in self.pins_to_trigger:
+        for pin in self.triggered_pins:
             loop.create_task(pin.trigger(context))

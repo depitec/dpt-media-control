@@ -11,15 +11,15 @@ if TYPE_CHECKING:
 import RPi.GPIO as GPIO
 
 # type OutputTriggerMethodName = Literal["pulse", "hold"]
-type OutputTriggerMethodName = Literal["pulse", "hold", "while_input"]
+type OutputTriggerMethods = Literal["pulse", "hold", "while_input"]
 
 
 class OutputPin(Pin):
-    _trigger_method: OutputTriggerMethodName
+    _trigger_method: OutputTriggerMethods
     _hold_time: float
 
-    def __init__(self, name: str, gpio_pin: int, trigger_type: OutputTriggerMethodName = "pulse", hold_time: float = 5):
-        super().__init__(name, gpio_pin, "output")
+    def __init__(self, id: str, gpio_pin: int, trigger_type: OutputTriggerMethods = "pulse", hold_time: float = 5):
+        super().__init__(id, gpio_pin, "output")
         self._trigger_method = trigger_type
         self._hold_time = hold_time
 
@@ -30,7 +30,7 @@ class OutputPin(Pin):
         return self._trigger_method
 
     @trigger_method.setter
-    def trigger_method(self, value: OutputTriggerMethodName):
+    def trigger_method(self, value: OutputTriggerMethods):
         self._trigger_method = value
 
     # --- Hold Time ---

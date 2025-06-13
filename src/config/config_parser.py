@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from pins.input_pin import InputPin
     from pins.output_pin import OutputPin, OutputTriggerMethods
     from pins.pin import Pin
-    from pins.virtual_pin import VirtualPin, VirtualPinMethodName
+    from pins.virtual_pin import VirtualPin, VirtualPinMethod
 
     class Project(TypedDict):
         name: str
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
     class VirtualPinConfig(PinConfig):
         ip_adress: str
-        virtual_pin_method_name: VirtualPinMethodName
+        virtual_pin_method: VirtualPinMethod
 
     class Config(TypedDict):
         Project: Project
@@ -115,7 +115,7 @@ class ConfigParser:
             toml_virtual_pin_table.add("id", virtual_pin["id"])
             toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
             toml_virtual_pin_table.add("ip_address", virtual_pin["ip_adress"])
-            toml_virtual_pin_table.add("virtual_pin_method_name", virtual_pin["virtual_pin_method_name"])
+            toml_virtual_pin_table.add("virtual_pin_method", virtual_pin["virtual_pin_method"])
             toml_virtual_pin_table.add("pins_to_block", virtual_pin["pins_to_block"])
             toml_virtual_pin_table.add("pins_to_unblock", virtual_pin["pins_to_unblock"])
 
