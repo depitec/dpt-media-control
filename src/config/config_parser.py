@@ -7,19 +7,38 @@ from typing import TYPE_CHECKING, Sequence, TypedDict
 import tomlkit
 
 if TYPE_CHECKING:
-    from ..pins.input_pin import InputPin
-    from ..pins.output_pin import OutputPin
-    from ..pins.pin import Pin
-    from ..pins.virtual_pin import VirtualPin
+    from pins.input_pin import InputPin
+    from pins.output_pin import OutputPin, OutputTriggerMethods
+    from pins.pin import Pin
+    from pins.virtual_pin import VirtualPin, VirtualPinMethodName
 
     class Project(TypedDict):
         name: str
 
+    class PinConfig(TypedDict):
+        id: str
+        gpio_pin: int
+        display_name: str
+        pins_to_block: list[str]
+        pins_to_unblock: list[str]
+
+    class InputPinConfig(PinConfig):
+        activation_delay: int
+        triggered_pins: list[str]
+
+    class OutputPinConfig(PinConfig):
+        hold_time: int
+        trigger_method: OutputTriggerMethods
+
+    class VirtualPinConfig(PinConfig):
+        ip_adress: str
+        virtual_pin_method_name: VirtualPinMethodName
+
     class Config(TypedDict):
         Project: Project
-        InputPins: list[InputPin]
-        OutputPins: list[OutputPin]
-        VirtualPins: list[VirtualPin]
+        InputPins: list[InputPinConfig]
+        OutputPins: list[OutputPinConfig]
+        VirtualPins: list[VirtualPinConfig]
 
 
 class ConfigParser:
@@ -67,37 +86,38 @@ class ConfigParser:
 
         for input_pin in config["InputPins"]:
             toml_input_pin_table = tomlkit.table()
-            toml_input_pin_table.add("id", input_pin.id)
-            toml_input_pin_table.add("display_name", input_pin.display_name)
-            toml_input_pin_table.add("gpio_pin", input_pin.gpio_pin)
-            toml_input_pin_table.add("activation_delay", input_pin.activation_delay)
-            toml_input_pin_table.add("pins_to_trigger", self.pins_to_ids(input_pin.pins_to_trigger))
-            toml_input_pin_table.add("pins_to_block", self.pins_to_ids(input_pin.pins_to_block))
-            toml_input_pin_table.add("pins_to_unblock", self.pins_to_ids(input_pin.pins_to_unblock))
+            toml_input_pin_table.add("id", input_pin["id"])
+            toml_input_pin_table.add("display_name", input_pin["display_name"])
+            toml_input_pin_table.add("gpio_pin", input_pin["gpio_pin"])
+            toml_input_pin_table.add("activation_delay", input_pin["activation_delay"])
+            toml_input_pin_table.add("pins_to_trigger", input_pin["triggered_pins"])
+            toml_input_pin_table.add("pins_to_block", input_pin["pins_to_block"])
+            toml_input_pin_table.add("pins_to_unblock", input_pin["pins_to_unblock"])
 
             toml_input_pins_array.append(toml_input_pin_table)  # type: ignore
 
         toml_output_pins_array = tomlkit.array()
         for output_pin in config["OutputPins"]:
             toml_output_pin_table = tomlkit.table()
-            toml_output_pin_table.add("id", output_pin.id)
-            toml_output_pin_table.add("display_name", output_pin.display_name)
-            toml_output_pin_table.add("gpio_pin", output_pin.gpio_pin)
-            toml_output_pin_table.add("trigger_method", output_pin.trigger_method)
-            toml_output_pin_table.add("pins_to_block", self.pins_to_ids(output_pin.pins_to_block))
-            toml_output_pin_table.add("pins_to_unblock", self.pins_to_ids(output_pin.pins_to_unblock))
+            toml_output_pin_table.add("id", output_pin["id"])
+            toml_output_pin_table.add("display_name", output_pin["display_name"])
+            toml_output_pin_table.add("gpio_pin", output_pin["gpio_pin"])
+            toml_output_pin_table.add("trigger_method", output_pin["trigger_method"])
+            toml_output_pin_table.add("hold_time", output_pin["hold_time"])
+            toml_output_pin_table.add("pins_to_block", output_pin["pins_to_block"])
+            toml_output_pin_table.add("pins_to_unblock", output_pin["pins_to_unblock"])
 
             toml_output_pins_array.append(toml_output_pin_table)  # type: ignore
 
         toml_virtual_pins_array = tomlkit.array()
         for virtual_pin in config["VirtualPins"]:
             toml_virtual_pin_table = tomlkit.table()
-            toml_virtual_pin_table.add("id", virtual_pin.id)
-            toml_virtual_pin_table.add("display_name", virtual_pin.display_name)
-
-            toml_virtual_pin_table.add("virtual_pin_method_name", virtual_pin.virtual_pin_method_name)
-            toml_virtual_pin_table.add("pins_to_block", self.pins_to_ids(virtual_pin.pins_to_block))
-            toml_virtual_pin_table.add("pins_to_unblock", self.pins_to_ids(virtual_pin.pins_to_unblock))
+            toml_virtual_pin_table.add("id", virtual_pin["id"])
+            toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
+            toml_virtual_pin_table.add("ip_address", virtual_pin["ip_adress"])
+            toml_virtual_pin_table.add("virtual_pin_method_name", virtual_pin["virtual_pin_method_name"])
+            toml_virtual_pin_table.add("pins_to_block", virtual_pin["pins_to_block"])
+            toml_virtual_pin_table.add("pins_to_unblock", virtual_pin["pins_to_unblock"])
 
             toml_virtual_pins_array.append(toml_virtual_pin_table)  # type: ignore
 
