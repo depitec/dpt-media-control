@@ -7,12 +7,11 @@ from typing import TYPE_CHECKING, Dict, Literal, Tuple, Union, cast, overload
 
 import RPi.GPIO as GPIO
 
-from config import ConfigParser
-from config.config_parser import Config
+from config import Config, ConfigParser, InputPinConfig, OutputPinConfig, VirtualPinConfig
 from pins import InputPin, OutputPin, VirtualPin
 
 if TYPE_CHECKING:
-    from .pins import PinType
+    from pins import PinType
 
 type PinUnion = InputPin | OutputPin | VirtualPin
 
