@@ -117,6 +117,9 @@ class MediaControl:
                 return pin
         return None
 
+    def get_pin_by_id(self, pin_id: str) -> InputPin | OutputPin | VirtualPin | None:
+        return self.pins.get(pin_id)
+
     def get_input_pins(self):
         input_pins: list[InputPin] = []
         for pin in self.pins.values():
