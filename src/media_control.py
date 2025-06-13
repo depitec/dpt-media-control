@@ -167,8 +167,57 @@ class MediaControl:
     def stop_event_loop(self):
         self.event_loop.stop()
 
+    def __register_pins_from_config(self, config: Config):
+        # register all pins
+        for pin_config in config["InputPins"]:
+            self.register_pin("input", pin_config["gpio_pin"], pin_config["display_name"])
+        for pin_config in config["OutputPins"]:
+            self.register_pin("output", pin_config["gpio_pin"], pin_config["display_name"])
+        for pin_config in config["VirtualPins"]:
+            self.register_pin("virtual", pin_config["gpio_pin"], pin_config["display_name"])
+
+    def __update_input_pins_from_config(self, config: list[InputPinConfig]):
+        # apply parameter to the pins
+        for pin_config in config:
+            pin = self.pins[pin_config["id"]]
+            assert isinstance(pin, InputPin)
+            pin.activation_delay = pin_config["activation_delay"] if pin_config["activation_delay"] else 0
+            # get trigger_pins by id
+            for triggered_pin_id in pin_config["triggered_pins"]:
+                triggered_pin = self.get_pin_by_id(triggered_pin_id)
+                assert isinstance(triggered_pin, (OutputPin, VirtualPin))
+                pin.add_triggered_pin(triggered_pin)
+
+    def __update_output_pins_from_config(self, config: list[OutputPinConfig]):
+        for pin_config in config:
+            pin = self.pins[pin_config["id"]]
+            assert isinstance(pin, OutputPin)
+            pin.hold_time = pin_config["hold_time"] if pin_config["hold_time"] else 0
+            pin.trigger_method = pin_config["trigger_method"]
+
+    def __update_virtual_pins_from_config(self, config: list[VirtualPinConfig]):
+        for pin_config in config:
+            pin = self.pins[pin_config["id"]]
+            assert isinstance(pin, VirtualPin)
+            pin.ip_adress = pin_config["ip_adress"]
+            pin.virtual_pin_method = pin_config["virtual_pin_method"]
+
     def apply_config(self, config: Config):
-        pass
+        self.__register_pins_from_config(config)
+        self.__update_input_pins_from_config(config["InputPins"])
+        self.__update_output_pins_from_config(config["OutputPins"])
+        self.__update_virtual_pins_from_config(config["VirtualPins"])
+
+        for pin_config in config["InputPins"] + config["OutputPins"] + config["VirtualPins"]:
+            pin = self.pins[pin_config["id"]]
+            for blocked_pin_id in pin_config["pins_to_block"]:
+                blocked_pin = self.get_pin_by_id(blocked_pin_id)
+                assert isinstance(blocked_pin, (InputPin, OutputPin, VirtualPin))
+                pin.add_block_pin(blocked_pin)
+            for unblocked_pin_id in pin_config["pins_to_unblock"]:
+                unblocked_pin = self.get_pin_by_id(unblocked_pin_id)
+                assert isinstance(unblocked_pin, (InputPin, OutputPin, VirtualPin))
+                pin.add_unblock_pin(unblocked_pin)
 
 
 if __name__ == "__main__":
