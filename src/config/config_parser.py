@@ -41,6 +41,30 @@ if TYPE_CHECKING:
         OutputPins: list[OutputPinConfig]
         VirtualPins: list[VirtualPinConfig]
 
+    class LoadedConfig(Config, total=False): ...
+
+    class LoadedInputPinConfig(InputPinConfig, total=False): ...
+
+    class LoadedOutputPinConfig(OutputPinConfig, total=False): ...
+
+    class LoadedVirtualPinConfig(VirtualPinConfig, total=False): ...
+
+
+DEFAULT_PIN_CONFIG: PinConfig = {
+    "id": "",
+    "type": "input",
+    "gpio_pin": 0,
+    "display_name": "",
+    "pins_to_block": [],
+    "pins_to_unblock": [],
+}
+
+DEFAULT_INPUT_PIN_CONFIG: InputPinConfig = {**DEFAULT_PIN_CONFIG, "activation_delay": 0, "triggered_pins": []}
+
+DEFAULT_OUTPUT_PIN_CONFIG: OutputPinConfig = {**DEFAULT_PIN_CONFIG, "hold_time": 0, "trigger_method": "pulse"}
+
+DEFAULT_VIRTUAL_PIN_CONFIG: VirtualPinConfig = {**DEFAULT_PIN_CONFIG, "ip_adress": "", "virtual_pin_method": "nothing"}
+
 
 class ConfigParser:
     config_file_path: Path
@@ -55,12 +79,35 @@ class ConfigParser:
             self.config_file_path.parent.mkdir(parents=True, exist_ok=True)
             self.config_file_path.touch()
 
+    # function to populate input pin config via map function
+    def __map_populate_input_pin_config(self, loaded_config: LoadedInputPinConfig) -> InputPinConfig:
+        new_config: InputPinConfig = {**DEFAULT_INPUT_PIN_CONFIG, **loaded_config}
+        return new_config
+
+    def __map_populate_output_pin_config(self, loaded_config: LoadedOutputPinConfig) -> OutputPinConfig:
+        new_config: OutputPinConfig = {**DEFAULT_OUTPUT_PIN_CONFIG, **loaded_config}
+        return new_config
+
+    def __map_populate_virtual_pin_config(self, loaded_config: LoadedVirtualPinConfig) -> VirtualPinConfig:
+        new_config: VirtualPinConfig = {**DEFAULT_VIRTUAL_PIN_CONFIG, **loaded_config}
+        return new_config
+
     def load_config(self) -> Config:
         with open(self.config_file_path, "rb") as f:
             config = tomlkit.load(f)
-            config_dict = config.unwrap()
-            # typecase config_dict to Config
-            # retrn type is wrong see: https://github.com/python/mypy/issues/8890
+            config_dict: LoadedConfig = config.unwrap()  # type: ignore
+
+            if "InputPins" not in config_dict:
+                config_dict["InputPins"] = []
+            if "OutputPins" not in config_dict:
+                config_dict["OutputPins"] = []
+            if "VirtualPins" not in config_dict:
+                config_dict["VirtualPins"] = []
+
+            config_dict["InputPins"] = list(map(self.__map_populate_input_pin_config, config_dict["InputPins"]))
+            config_dict["OutputPins"] = list(map(self.__map_populate_output_pin_config, config_dict["OutputPins"]))
+            config_dict["VirtualPins"] = list(map(self.__map_populate_virtual_pin_config, config_dict["VirtualPins"]))
+
             return config_dict  # type: ignore
 
     def save_config(self, config: Config, with_timestamp: bool = False):
@@ -88,6 +135,14 @@ class ConfigParser:
         for input_pin in config["InputPins"]:
             toml_input_pin_table = tomlkit.table()
             toml_input_pin_table.add("id", input_pin["id"])
+            toml_input_pin_table.add("type", "input")
+            toml_input_pin_table.add("display_name", input_pin["display_name"])
+            toml_input_pin_table.add("gpio_pin", input_pin["gpio_pin"])
+            toml_input_pin_table.add("activation_delay", input_pin["activation_delay"])
+            toml_input_pin_table.add("pins_to_trigger", input_pin["triggered_pins"])
+            toml_input_pin_table.add("pins_to_block", input_pin["pins_to_block"])
+            toml_input_pin_table.add("pins_to_unblock", input_pin["pins_to_unblock"])
+            toml_input_pin_table.add("id", input_pin["id"])
             toml_input_pin_table.add("display_name", input_pin["display_name"])
             toml_input_pin_table.add("gpio_pin", input_pin["gpio_pin"])
             toml_input_pin_table.add("activation_delay", input_pin["activation_delay"])
@@ -101,6 +156,14 @@ class ConfigParser:
         for output_pin in config["OutputPins"]:
             toml_output_pin_table = tomlkit.table()
             toml_output_pin_table.add("id", output_pin["id"])
+            toml_output_pin_table.add("type", "output")
+            toml_output_pin_table.add("display_name", output_pin["display_name"])
+            toml_output_pin_table.add("gpio_pin", output_pin["gpio_pin"])
+            toml_output_pin_table.add("trigger_method", output_pin["trigger_method"])
+            toml_output_pin_table.add("hold_time", output_pin["hold_time"])
+            toml_output_pin_table.add("pins_to_block", output_pin["pins_to_block"])
+            toml_output_pin_table.add("pins_to_unblock", output_pin["pins_to_unblock"])
+            toml_output_pin_table.add("id", output_pin["id"])
             toml_output_pin_table.add("display_name", output_pin["display_name"])
             toml_output_pin_table.add("gpio_pin", output_pin["gpio_pin"])
             toml_output_pin_table.add("trigger_method", output_pin["trigger_method"])
@@ -113,6 +176,13 @@ class ConfigParser:
         toml_virtual_pins_array = tomlkit.array()
         for virtual_pin in config["VirtualPins"]:
             toml_virtual_pin_table = tomlkit.table()
+            toml_virtual_pin_table.add("id", virtual_pin["id"])
+            toml_virtual_pin_table.add("type", "virtual")
+            toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
+            toml_virtual_pin_table.add("ip_address", virtual_pin["ip_adress"])
+            toml_virtual_pin_table.add("virtual_pin_method", virtual_pin["virtual_pin_method"])
+            toml_virtual_pin_table.add("pins_to_block", virtual_pin["pins_to_block"])
+            toml_virtual_pin_table.add("pins_to_unblock", virtual_pin["pins_to_unblock"])
             toml_virtual_pin_table.add("id", virtual_pin["id"])
             toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
             toml_virtual_pin_table.add("ip_address", virtual_pin["ip_adress"])
