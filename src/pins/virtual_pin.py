@@ -9,17 +9,17 @@ from .pin import Pin
 if TYPE_CHECKING:
     from .output_pin import TriggerContext
 
-type VirtualPinMethod = Literal["pjlink_power_on", "pjlink_power_off"]
+type VirtualPinMethod = Literal["pjlink_power_on", "pjlink_power_off", "nothing"]
 
 
 class VirtualPin(Pin):
-    _ip_adress: str | None
-    _virtual_pin_method: VirtualPinMethod | None
+    _ip_adress: str
+    _virtual_pin_method: VirtualPinMethod
 
     def __init__(self, id: str, virtual_gpio_pin: int):
         super().__init__(id, virtual_gpio_pin, "virtual")
-        self._ip_adress = None
-        self._virtual_pin_method = None
+        self._ip_adress = ""
+        self._virtual_pin_method = "nothing"
 
     # === PROPERTIES ===
     # --- Pin Adress ---
@@ -46,7 +46,7 @@ class VirtualPin(Pin):
         self._ip_adress = pin_adress
 
     async def after_activate(self, trigger_context: TriggerContext):
-        if (self._virtual_pin_method is None) or (self._ip_adress is None):
+        if (self._virtual_pin_method == "nothing") or (self._ip_adress == ""):
             return
 
         match self._virtual_pin_method:
