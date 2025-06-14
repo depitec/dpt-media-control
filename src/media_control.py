@@ -7,11 +7,13 @@ from typing import TYPE_CHECKING, Dict, Literal, Tuple, Union, cast, overload
 
 import RPi.GPIO as GPIO
 
-from config import Config, ConfigParser, InputPinConfig, OutputPinConfig, VirtualPinConfig
+from config import ConfigParser
 from pins import InputPin, OutputPin, VirtualPin
 
 if TYPE_CHECKING:
+    from config import Config, InputPinConfig, OutputPinConfig, VirtualPinConfig
     from pins import PinType
+
 
 type PinUnion = InputPin | OutputPin | VirtualPin
 
@@ -168,13 +170,12 @@ class MediaControl:
         self.event_loop.stop()
 
     def __register_pins_from_config(self, config: Config):
-        # register all pins
-        for pin_config in config["InputPins"]:
-            self.register_pin("input", pin_config["gpio_pin"], pin_config["display_name"])
-        for pin_config in config["OutputPins"]:
-            self.register_pin("output", pin_config["gpio_pin"], pin_config["display_name"])
-        for pin_config in config["VirtualPins"]:
-            self.register_pin("virtual", pin_config["gpio_pin"], pin_config["display_name"])
+        # combine all pin configs
+
+        all_pins = config["InputPins"] + config["OutputPins"] + config["VirtualPins"]
+
+        for pin_config in all_pins:
+            self.register_pin(pin_config["type"], pin_config["gpio_pin"], pin_config["display_name"])
 
     def __update_input_pins_from_config(self, config: list[InputPinConfig]):
         # apply parameter to the pins
@@ -221,42 +222,15 @@ class MediaControl:
 
 
 if __name__ == "__main__":
-    # get args from command line
-    import argparse
+    GPIO.setmode(GPIO.BCM)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", help="path to config file", default="dpt-media-control.toml")
+    test_config_file_path = Path(__file__).parent / "config" / "test_config.toml"
 
-    parser.add_argument("--no-rpi", help="try running without RPi.GPIO", action="store_true")
-
-    args = parser.parse_args()
-    config_file_path = args.config
-    no_rpi = args.no_rpi
-
-    import RPi.GPIO as GPIO
+    controller = MediaControl("dpt-media-control", test_config_file_path)
 
     try:
-        if not no_rpi:
-            GPIO.setmode(GPIO.BCM)
-
-        controller = MediaControl("dpt-media-control.toml")
-
-        if not no_rpi:
-            input1 = controller.register_pin("input", 17)
-            output1 = controller.register_pin("output", 27)
-            input2 = controller.register_pin("input", 23)
-            output2 = controller.register_pin("output", 24)
-
-            input1.add_triggered_pin(output1)
-            input2.add_triggered_pin(output2)
-
-            output1.hold_time = 3
-            output1.trigger_method = "hold"
-            output2.trigger_method = "while_input"
-
         controller.start_event_loop()
 
     except KeyboardInterrupt:
-        print("KeyboardInterrupt")
-        if not no_rpi:
-            GPIO.cleanup()
+        controller.stop_event_loop()
+        GPIO.cleanup()

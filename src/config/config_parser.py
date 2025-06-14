@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Sequence, TypedDict
+from typing import TYPE_CHECKING, Literal, Sequence, TypedDict
 
 import tomlkit
 
@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
     class PinConfig(TypedDict):
         id: str
+        type: Literal["input"] | Literal["output"] | Literal["virtual"]
         gpio_pin: int
         display_name: str
         pins_to_block: list[str]
