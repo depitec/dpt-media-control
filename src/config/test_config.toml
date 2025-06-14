@@ -2,10 +2,58 @@
 name = "dpt-media-control"
 
 [[InputPins]]
-name = "input1"
-gpio_pin = 1
-activation_delay = 0.5
+
+id="I#17"
+dispaly_name = "input1"
+type = "input"
+gpio_pin = 17
+activation_delay = 0
+triggered_pins = ["O#14"]
+
 [[InputPins]]
-name = "input2"
-gpio_pin = 2
-activation_delay = 0.5
+
+id="I#27"
+display_name = "input2"
+type = "input"
+gpio_pin = 27
+activation_delay = 0
+triggered_pins = ["O#15"]
+
+[[InputPins]]
+
+id="I#22"
+display_name = "input3"
+type = "input"
+gpio_pin = 22
+activation_delay = 0
+
+triggered_pins = ["O#18"]
+
+[[OutputPins]]
+
+id="O#14"
+display_name = "output1"
+type = "output"
+gpio_pin = 14
+hold_time = 0
+trigger_method = "pulse"
+
+[[OutputPins]]
+
+id="O#15"
+display_name = "output2"
+type = "output"
+gpio_pin = 15
+hold_time = 3
+trigger_method = "hold"
+pins_to_block= ["O#14"]
+
+[[OutputPins]]
+
+id="O#18"
+display_name = "output3"
+type = "output"
+gpio_pin = 18
+hold_time = 0
+trigger_method = "while_input"
+pins_to_block= ["O#15"]
