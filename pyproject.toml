@@ -9,7 +9,7 @@ authors = [
 ]
 
 dependencies = [
-    "pypjlink2>=1.2.2",
+    "aiopjlink>=1.0.5",
     "rpi-lgpio>=0.6",
     "tomlkit>=0.13.3",
 ]

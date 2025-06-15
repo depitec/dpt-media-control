@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     class VirtualPinConfig(PinConfig):
         ip_address: str
         virtual_trigger_method: VirtualTriggerMethod
+        password: str
 
     class Config(TypedDict):
         Project: Project
@@ -67,6 +68,7 @@ DEFAULT_VIRTUAL_PIN_CONFIG: VirtualPinConfig = {
     **DEFAULT_PIN_CONFIG,
     "ip_address": "",
     "virtual_trigger_method": "nothing",
+    "password": "",
 }
 
 
@@ -171,6 +173,7 @@ class ConfigParser:
             toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
             toml_virtual_pin_table.add("ip_address", virtual_pin["ip_address"])
             toml_virtual_pin_table.add("virtual_trigger_method", virtual_pin["virtual_trigger_method"])
+            toml_virtual_pin_table.add("password", virtual_pin["password"])
             toml_virtual_pin_table.add("pins_to_block", virtual_pin["pins_to_block"])
             toml_virtual_pin_table.add("pins_to_unblock", virtual_pin["pins_to_unblock"])
 

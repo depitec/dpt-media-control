@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal
 
-from pypjlink import Projector  # type: ignore
+from aiopjlink import PJLink  # type: ignore
 
 from .pin import Pin
 
@@ -15,11 +15,13 @@ type VirtualTriggerMethod = Literal["pjlink_power_on", "pjlink_power_off", "noth
 class VirtualPin(Pin):
     _ip_address: str
     _virtual_trigger_method: VirtualTriggerMethod
+    _password: str
 
-    def __init__(self, id: str, virtual_gpio_pin: int):
+    def __init__(self, id: str, virtual_gpio_pin: int, password: str = ""):
         super().__init__(id, virtual_gpio_pin, "virtual")
         self._ip_address = ""
         self._virtual_trigger_method = "nothing"
+        self._password = password
 
     # === PROPERTIES ===
     # --- Pin Address ---
@@ -40,6 +42,15 @@ class VirtualPin(Pin):
     def virtual_trigger_method(self, value: VirtualTriggerMethod):
         self._virtual_trigger_method = value
 
+    # --- Password ---
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, value: str):
+        self._password = value
+
     # === METHODS ===
 
     def set_pin_address(self, pin_address: str):
@@ -52,20 +63,18 @@ class VirtualPin(Pin):
         try:
             match self._virtual_trigger_method:
                 case "pjlink_power_on":
-                    self._trigger_pjlink_power_on(trigger_context)
+                    await self._trigger_pjlink_power_on(trigger_context)
 
                 case "pjlink_power_off":
-                    self._trigger_pjlink_power_off(trigger_context)
+                    await self._trigger_pjlink_power_off(trigger_context)
         except Exception as e:
             print(e)
 
     # --- Trigger Methods ---
-    def _trigger_pjlink_power_on(self, trigger_context: TriggerContext):
-        with Projector.from_address(self.ip_address) as projector:  # type: ignore
-            projector.authenticate()  # type: ignore
-            projector.set_power("on")  # type: ignore
+    async def _trigger_pjlink_power_on(self, trigger_context: TriggerContext):
+        async with PJLink(address=self.ip_address, password=self.password) as link:  # type: ignore
+            await link.power.turn_on()
 
-    def _trigger_pjlink_power_off(self, trigger_context: TriggerContext):
-        with Projector.from_address(self.ip_address) as projector:  # type: ignore
-            projector.authenticate()  # type: ignore
-            projector.set_power("off")  # type: ignore
+    async def _trigger_pjlink_power_off(self, trigger_context: TriggerContext):
+        async with PJLink(address=self.ip_address, password=self.password) as link:  # type: ignore
+            await link.power.turn_off()
