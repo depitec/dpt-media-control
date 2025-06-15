@@ -1,0 +1,13 @@
+[Unit]
+Description=Depitec Media Control
+After=network.target
+[Service]
+User=<<THIS_USER>>
+Type=simple
+Restart=always
+RuntimeDirectory=dptmc
+WorkingDirectory=/run/dptmc
+ExecStart=<<THIS_PYTHON>> <<THIS_DIR>>/src/main.py
+
+[Install]
+WantedBy=multi-user.target
