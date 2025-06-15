@@ -201,7 +201,7 @@ class MediaControl:
         for pin_config in config:
             pin = self.pins[pin_config["id"]]
             assert isinstance(pin, VirtualPin)
-            pin.ip_adress = pin_config["ip_adress"]
+            pin.ip_address = pin_config["ip_address"]
             pin.virtual_trigger_method = pin_config["virtual_trigger_method"]
 
     def apply_config(self, config: Config):
