@@ -31,6 +31,6 @@
 # id="V#<id>"
 # display_name = "<name>"
 # type = "virtual"
-# virtual_trigger_method = "<trigger_method>" # pulse, hold, while_input
+# virtual_trigger_method = "<trigger_method>" # "pjlink_power_on", "pjlink_power_off", "nothing"
 # pins_to_block = [<PinID>]
 # pins_to_unblock = [<PinID>]
