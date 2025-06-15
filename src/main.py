@@ -8,6 +8,7 @@ controller = MediaControl("dpt-media-control")
 try:
     controller.start_event_loop()
 
-except KeyboardInterrupt:
+except Exception as e:
+    print(e)
     controller.stop_event_loop()
     GPIO.cleanup()
