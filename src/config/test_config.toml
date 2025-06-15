@@ -61,6 +61,6 @@ pins_to_block= []
 [[VirtualPins]]
 id="V#1"
 display_name = "v1"
-gpio_pin = 1
+gpio_pin = -1
 type = "virtual"
 virtual_trigger_method = "pjlink_power_on" # "pjlink_power_on", "pjlink_power_off", "nothing"
