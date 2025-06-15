@@ -1,0 +1,36 @@
+# dpt-media-control configuration file
+# This file is used to configure the dpt-media-control application.
+
+# The following sections and parameters are available:
+# [Project]
+# name = "My Project name"
+#
+# For configuration of Inputpins, Outputpins and VirtualPins you you use the [[<Pin>]] syntax. You need to add two brackets instead of one.
+#
+# [[InputPins]]
+# id="I#<gpio_pin>"
+# dispaly_name = "<name>"
+# type = "input"
+# gpio_pin = <gpio_pin>
+# activation_delay = <delay>
+# triggered_pins = [<PinID>]
+# pins_to_block = [<PinID>]
+# pins_to_unblock = [<PinID>]
+#
+# [[OutputPins]]
+# id="O#<gpio_pin>"
+# display_name = "<name>"
+# type = "output"
+# gpio_pin = <gpio_pin>
+# hold_time = <hold_time>
+# trigger_method = "<trigger_method>" # pulse, hold, while_input
+# pins_to_block = [<PinID>]
+# pins_to_unblock = [<PinID>]
+#
+# [[VirtualPins]]
+# id="V#<id>"
+# display_name = "<name>"
+# type = "virtual"
+# virtual_trigger_method = "<trigger_method>" # pulse, hold, while_input
+# pins_to_block = [<PinID>]
+# pins_to_unblock = [<PinID>]
