@@ -93,7 +93,7 @@ class MediaControl:
             if gpio_pin > 0:
                 raise ValueError("virtual pin must be negative")
 
-            print("registering virtual pin")
+            print(f"registering virtual pin v{abs(gpio_pin)}")
             virtual_pin_name = f"V#{abs(gpio_pin)}"
             new_virtual_pin: VirtualPin = VirtualPin(virtual_pin_name, gpio_pin)
             new_virtual_pin.display_name = display_name if display_name else virtual_pin_name
