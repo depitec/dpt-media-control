@@ -80,6 +80,7 @@ class MediaControl:
         if pin_type == "output":
             print(f"registering output pin {gpio_pin}")
             GPIO.setup(gpio_pin, GPIO.OUT)
+            GPIO.output(gpio_pin, GPIO.LOW)
             output_pin_id = f"O#{gpio_pin}"
             new_output_pin: OutputPin = OutputPin(output_pin_id, gpio_pin)
             new_output_pin.display_name = display_name if display_name else output_pin_id
