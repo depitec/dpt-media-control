@@ -146,13 +146,6 @@ class ConfigParser:
             toml_input_pin_table.add("pins_to_trigger", input_pin["triggered_pins"])
             toml_input_pin_table.add("pins_to_block", input_pin["pins_to_block"])
             toml_input_pin_table.add("pins_to_unblock", input_pin["pins_to_unblock"])
-            toml_input_pin_table.add("id", input_pin["id"])
-            toml_input_pin_table.add("display_name", input_pin["display_name"])
-            toml_input_pin_table.add("gpio_pin", input_pin["gpio_pin"])
-            toml_input_pin_table.add("activation_delay", input_pin["activation_delay"])
-            toml_input_pin_table.add("pins_to_trigger", input_pin["triggered_pins"])
-            toml_input_pin_table.add("pins_to_block", input_pin["pins_to_block"])
-            toml_input_pin_table.add("pins_to_unblock", input_pin["pins_to_unblock"])
 
             toml_input_pins_array.append(toml_input_pin_table)  # type: ignore
 
@@ -167,13 +160,6 @@ class ConfigParser:
             toml_output_pin_table.add("hold_time", output_pin["hold_time"])
             toml_output_pin_table.add("pins_to_block", output_pin["pins_to_block"])
             toml_output_pin_table.add("pins_to_unblock", output_pin["pins_to_unblock"])
-            toml_output_pin_table.add("id", output_pin["id"])
-            toml_output_pin_table.add("display_name", output_pin["display_name"])
-            toml_output_pin_table.add("gpio_pin", output_pin["gpio_pin"])
-            toml_output_pin_table.add("trigger_method", output_pin["trigger_method"])
-            toml_output_pin_table.add("hold_time", output_pin["hold_time"])
-            toml_output_pin_table.add("pins_to_block", output_pin["pins_to_block"])
-            toml_output_pin_table.add("pins_to_unblock", output_pin["pins_to_unblock"])
 
             toml_output_pins_array.append(toml_output_pin_table)  # type: ignore
 
@@ -182,12 +168,6 @@ class ConfigParser:
             toml_virtual_pin_table = tomlkit.table()
             toml_virtual_pin_table.add("id", virtual_pin["id"])
             toml_virtual_pin_table.add("type", "virtual")
-            toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
-            toml_virtual_pin_table.add("ip_address", virtual_pin["ip_address"])
-            toml_virtual_pin_table.add("virtual_trigger_method", virtual_pin["virtual_trigger_method"])
-            toml_virtual_pin_table.add("pins_to_block", virtual_pin["pins_to_block"])
-            toml_virtual_pin_table.add("pins_to_unblock", virtual_pin["pins_to_unblock"])
-            toml_virtual_pin_table.add("id", virtual_pin["id"])
             toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
             toml_virtual_pin_table.add("ip_address", virtual_pin["ip_address"])
             toml_virtual_pin_table.add("virtual_trigger_method", virtual_pin["virtual_trigger_method"])
