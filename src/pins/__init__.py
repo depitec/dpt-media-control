@@ -7,6 +7,6 @@ from .pin import Pin as Pin
 from .pin import PinState as PinState
 from .pin import PinType as PinType
 from .virtual_pin import VirtualPin as VirtualPin
-from .virtual_pin import VirtualPinMethod as VirtualPinMethod
+from .virtual_pin import VirtualTriggerMethod as VirtualTriggerMethod
 
 type PinUnion = Union[InputPin, OutputPin, VirtualPin]

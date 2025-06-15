@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from pins.input_pin import InputPin
     from pins.output_pin import OutputPin, OutputTriggerMethods
     from pins.pin import Pin
-    from pins.virtual_pin import VirtualPin, VirtualPinMethod
+    from pins.virtual_pin import VirtualPin, VirtualTriggerMethod
 
     class Project(TypedDict):
         name: str
@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
     class VirtualPinConfig(PinConfig):
         ip_adress: str
-        virtual_pin_method: VirtualPinMethod
+        virtual_pin_method: VirtualTriggerMethod
 
     class Config(TypedDict):
         Project: Project
