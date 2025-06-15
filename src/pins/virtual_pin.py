@@ -22,7 +22,7 @@ class VirtualPin(Pin):
         self._virtual_trigger_method = "nothing"
 
     # === PROPERTIES ===
-    # --- Pin Adress ---
+    # --- Pin Address ---
     @property
     def ip_address(self):
         return self._ip_address
@@ -49,16 +49,18 @@ class VirtualPin(Pin):
         if (self._virtual_trigger_method == "nothing") or (self._ip_address == ""):
             return
 
-        match self._virtual_trigger_method:
-            case "pjlink_power_on":
-                self._trigger_pjlink_power_on(trigger_context)
+        try:
+            match self._virtual_trigger_method:
+                case "pjlink_power_on":
+                    self._trigger_pjlink_power_on(trigger_context)
 
-            case "pjlink_power_off":
-                self._trigger_pjlink_power_off(trigger_context)
+                case "pjlink_power_off":
+                    self._trigger_pjlink_power_off(trigger_context)
+        except Exception as e:
+            print(e)
 
     # --- Trigger Methods ---
     def _trigger_pjlink_power_on(self, trigger_context: TriggerContext):
-        print("trigger pjlink power on")
         with Projector.from_address(self.ip_address) as projector:  # type: ignore
             projector.authenticate()  # type: ignore
             projector.set_power("on")  # type: ignore
