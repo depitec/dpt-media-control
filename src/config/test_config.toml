@@ -63,4 +63,5 @@ id="V#1"
 display_name = "v1"
 gpio_pin = -1
 type = "virtual"
+ip_address = "200.100.0.100"
 virtual_trigger_method = "pjlink_power_on" # "pjlink_power_on", "pjlink_power_off", "nothing"
