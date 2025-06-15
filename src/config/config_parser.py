@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 
     class VirtualPinConfig(PinConfig):
         ip_adress: str
-        virtual_pin_method: VirtualTriggerMethod
+        virtual_trigger_method: VirtualTriggerMethod
 
     class Config(TypedDict):
         Project: Project
@@ -63,7 +63,11 @@ DEFAULT_INPUT_PIN_CONFIG: InputPinConfig = {**DEFAULT_PIN_CONFIG, "activation_de
 
 DEFAULT_OUTPUT_PIN_CONFIG: OutputPinConfig = {**DEFAULT_PIN_CONFIG, "hold_time": 0, "trigger_method": "pulse"}
 
-DEFAULT_VIRTUAL_PIN_CONFIG: VirtualPinConfig = {**DEFAULT_PIN_CONFIG, "ip_adress": "", "virtual_pin_method": "nothing"}
+DEFAULT_VIRTUAL_PIN_CONFIG: VirtualPinConfig = {
+    **DEFAULT_PIN_CONFIG,
+    "ip_adress": "",
+    "virtual_trigger_method": "nothing",
+}
 
 
 class ConfigParser:
@@ -180,13 +184,13 @@ class ConfigParser:
             toml_virtual_pin_table.add("type", "virtual")
             toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
             toml_virtual_pin_table.add("ip_address", virtual_pin["ip_adress"])
-            toml_virtual_pin_table.add("virtual_pin_method", virtual_pin["virtual_pin_method"])
+            toml_virtual_pin_table.add("virtual_trigger_method", virtual_pin["virtual_trigger_method"])
             toml_virtual_pin_table.add("pins_to_block", virtual_pin["pins_to_block"])
             toml_virtual_pin_table.add("pins_to_unblock", virtual_pin["pins_to_unblock"])
             toml_virtual_pin_table.add("id", virtual_pin["id"])
             toml_virtual_pin_table.add("display_name", virtual_pin["display_name"])
             toml_virtual_pin_table.add("ip_address", virtual_pin["ip_adress"])
-            toml_virtual_pin_table.add("virtual_pin_method", virtual_pin["virtual_pin_method"])
+            toml_virtual_pin_table.add("virtual_trigger_method", virtual_pin["virtual_trigger_method"])
             toml_virtual_pin_table.add("pins_to_block", virtual_pin["pins_to_block"])
             toml_virtual_pin_table.add("pins_to_unblock", virtual_pin["pins_to_unblock"])
 

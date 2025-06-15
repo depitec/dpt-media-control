@@ -33,11 +33,11 @@ class VirtualPin(Pin):
 
     # --- Virtual Pin Method Name ---
     @property
-    def virtual_pin_method(self):
+    def virtual_trigger_method(self):
         return self._virtual_trigger_method
 
-    @virtual_pin_method.setter
-    def virtual_pin_method(self, value: VirtualTriggerMethod):
+    @virtual_trigger_method.setter
+    def virtual_trigger_method(self, value: VirtualTriggerMethod):
         self._virtual_trigger_method = value
 
     # === METHODS ===
